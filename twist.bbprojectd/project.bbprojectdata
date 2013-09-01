@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>HierarchyData</key>
+	<array>
+		<string>EB4D0B9F-F5EC-4605-A1CC-BE0CA1BD6306</string>
+	</array>
+	<key>ProjectItems</key>
+	<dict>
+		<key>EB4D0B9F-F5EC-4605-A1CC-BE0CA1BD6306</key>
+		<dict>
+			<key>ItemData</key>
+			<dict>
+				<key>BookmarkData</key>
+				<data>
+				Ym9va2gDAAAAAAQQMAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				AAAAAAAAAAAAAAAAAAAAfAIAAAUAAAABAQAAVXNlcnMA
+				AAAGAAAAAQEAAGV2Z2VueQAADAAAAAEBAABHb29nbGUg
+				RHJpdmURAAAAAQEAAEVjbGlwc2UgV29ya3NwYWNlAAAA
+				BQAAAAEBAAB0d2lzdAAAABQAAAABBgAABAAAABQAAAAk
+				AAAAOAAAAFQAAAAIAAAABAMAAF65AAAAAAAACAAAAAQD
+				AACMFQUAAAAAAAgAAAAEAwAAC1AkAAAAAAAIAAAABAMA
+				ADBAKAAAAAAACAAAAAQDAAB0QCgAAAAAABQAAAABBgAA
+				gAAAAJAAAACgAAAAsAAAAMAAAAAYAAAAAQIAAAIAAAAA
+				AAAADwAAAAAAAAAAAAAAAAAAAAQAAAADAwAAAwAAAAQA
+				AAADAwAA9QEAAAwAAAABAQAATWFjaW50b3NoIEhECAAA
+				AAQDAAAAgIE9dAAAAAgAAAAABAAAQbWdWcoAAAAkAAAA
+				AQEAADhEMTIzOUFELTQ5MkUtM0M3NS1CRkEzLTg1QTBC
+				Q0JCRDBGQxgAAAABAgAAgQAAAAEACADvPwAAAQAIAAAA
+				AAAAAAAAAQAAAAEBAAAvAAAAAAAAAAEFAAC6AAAAAQIA
+				ADA0ZGJjMDhmYTg1OWI1YTU4Yzk5YmQ5ZTBjYjE5ZWMw
+				NzYxYzc1NDA7MDAwMDAwMDA7MDAwMDAwMDAwMDAwMDAy
+				MDtjb20uYXBwbGUuYXBwLXNhbmRib3gucmVhZC13cml0
+				ZTswMDAwMDAwMTswZTAwMDAwMjswMDAwMDAwMDAwMjg0
+				MDc0Oy91c2Vycy9ldmdlbnkvZ29vZ2xlIGRyaXZlL2Vj
+				bGlwc2Ugd29ya3NwYWNlL3R3aXN0AAAAtAAAAP7///8B
+				AAAAAAAAAA4AAAAEEAAAZAAAAAAAAAAFEAAA0AAAAAAA
+				AAAQEAAA7AAAAAAAAAACIAAApAEAAAAAAAAQIAAAJAEA
+				AAAAAAARIAAAWAEAAAAAAAASIAAAOAEAAAAAAAATIAAA
+				SAEAAAAAAAAgIAAAhAEAAAAAAAAwIAAAsAEAAAAAAAAB
+				wAAADAEAAAAAAAARwAAAFAAAAAAAAAASwAAAGAEAAAAA
+				AACA8AAAuAEAAAAAAAA=
+				</data>
+				<key>FileURL</key>
+				<string>file://localhost/Users/evgeny/Google%20Drive/Eclipse%20Workspace/twist/</string>
+				<key>RelativePath</key>
+				<string>./</string>
+				<key>TypeID</key>
+				<string>_CFileLocator</string>
+				<key>Version</key>
+				<integer>1</integer>
+			</dict>
+			<key>ItemName</key>
+			<string>twist</string>
+			<key>ItemType</key>
+			<string>FolderReference</string>
+			<key>UserOverrideItemName</key>
+			<true/>
+		</dict>
+	</dict>
+	<key>com.barebones.DocumentFormatVersion</key>
+	<integer>5</integer>
+	<key>com.barebones.DocumentType</key>
+	<string>Project</string>
+</dict>
+</plist>

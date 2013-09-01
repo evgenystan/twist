@@ -1,0 +1,10 @@
+<?xml version='1.0'?>
+<!DOCTYPE TestResponse>
+<response promptId='' correct='yes' enableSubmit='yes'>
+	<comments>
+		<field id='1'></field>
+	</comments>
+	<newPrompt promptId='' before='' after=''>
+		<div></div>
+	</newPrompt>
+</response>
