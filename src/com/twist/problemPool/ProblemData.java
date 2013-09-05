@@ -16,7 +16,6 @@ public class ProblemData
 		this.answerFields = new HashMap<String,String>();
 		this.answerComments = new HashMap<String,String>();
 		this.answerCorrect = false;
-		this.containsAnswerFields = false;
 		this.fetchPrompt = new ArrayList<String>();
 		this.supplyPrompts = new ArrayList<String>();
 		this.promptFetched = false;
