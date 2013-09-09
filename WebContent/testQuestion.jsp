@@ -90,13 +90,18 @@ If your browser supports JavaScript, be sure it is enabled.</b>
 	<%
 		ProblemPuller pPuller = new ProblemPuller();
 		String id=request.getParameter("id");
+		String course=request.getParameter("course");
 		
 		if (id == null)
 		{
 		}
-		else
+		else if (course == null)
 		{
 			out.print(pPuller.getProblemStatementAsString(Integer.parseInt(id)));
+		}
+		else
+		{
+			out.print(pPuller.getProblemStatementAsStringV2(course,id));
 		}
 	%>
 </div>

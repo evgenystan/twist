@@ -77,7 +77,7 @@ public class ProblemPuller
 				String graphString=kTalker.evaluateToString("ExportString[graph, \"SVG\"]");
 
 				reply = "<div promptId = '5'><h2>Integrals</h2></div><div promptId = '5'><p>Let the region of density <script type=\"math/tex\">\\delta = " + kTalker.executeCommand("TeXForm[density]") + "</script> in <script type=\"math/tex\"> x y</script>-plane be bounded by two functions <script type=\"math/tex\"> f(x) = " + kTalker.executeCommand("TeXForm[TraditionalForm[f[x]]]") + "</script> and <script type=\"math/tex\"> g(x) = " + kTalker.executeCommand("TeXForm[TraditionalForm[g[x]]]") + "</script></p><div>" + graphString + "</div></div>";
-				reply+= "<div><h2>Center of Mass</h2></div><div promptId = '6'><p>Set up the integral for computing the moment <script type=\"math/tex\">M_x</script> about the <script type=\"math/tex\">x</script>-axis (you may use either vertical or horizontal slices)</p><div promptId = '6' class='inputbox'><script type=\"math/tex\">M_{x}=</script>&nbsp;<span style='display: inline-block; position: relative; font-size: 104%;'><span class='msubsup' style='display: inline-block; position: relative;'><span class='mo' style='font-family: STIXIntegralsD; vertical-align: -0.615em; '>º</span><span style='display:inline-block; '><span class='mrow' style='display:block; position:relative; left:0.5em;'><span fieldId = '1' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span><span class='mrow'  style='display:block; position:relative; top: 1.1em; left: -0.2em;'><span fieldId = '2' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span>	</span>	</span><span class='mrow'><span fieldId = '3' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span><span class='mspace' style='height: 0em; vertical-align: 0em; width: 0.188em; display: inline-block; overflow: hidden; '></span><span class='mi' style='font-family: STIXGeneral-Italic; '>d</span><span class='mrow'><span fieldId = '4' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span></span>&nbsp;<input promptId = '6' class=\"evalButton\" type=\"button\" value=\"Submit\" />&nbsp;<span id='resultsField6'></span></div></div>";
+				reply+= "<div><h2>Center of Mass</h2></div><div promptId = '6'><p>Set up the integral for computing the moment <script type=\"math/tex\">M_x</script> about the <script type=\"math/tex\">x</script>-axis (you may use either vertical or horizontal slices)</p><div promptId = '6' class='inputbox'><script type=\"math/tex\">M_{x}=</script>&nbsp;<span style='display: inline-block; position: relative; font-size: 104%;'><span class='msubsup' style='display: inline-block; position: relative;'><span class='mo' style='font-family: STIXIntegralsD; vertical-align: -0.615em; '>âˆ«</span><span style='display:inline-block; '><span class='mrow' style='display:block; position:relative; left:0.5em;'><span fieldId = '1' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span><span class='mrow'  style='display:block; position:relative; top: 1.1em; left: -0.2em;'><span fieldId = '2' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span>	</span>	</span><span class='mrow'><span fieldId = '3' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span><span class='mspace' style='height: 0em; vertical-align: 0em; width: 0.188em; display: inline-block; overflow: hidden; '></span><span class='mi' style='font-family: STIXGeneral-Italic; '>d</span><span class='mrow'><span fieldId = '4' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span></span>&nbsp;<input promptId = '6' class=\"evalButton\" type=\"button\" value=\"Submit\" />&nbsp;<span id='resultsField6'></span></div></div>";
 				test = "(Catch[Scan[If[Not[SyntaxQ[#]], Throw[\"Syntax error is found in '\" <> # <> \"'\"]] &, {##2}];Module[{upperLimit, lowerLimit, func, iVar, strippedIVar, transformedFunc},strippedIVar = StringReplace[#5, Whitespace -> \"\"];If[Or[StringLength[strippedIVar] > 1, StringLength[strippedIVar] < 1, Not[LetterQ[strippedIVar]]], Throw[\"Integration variable must be a single letter\"]];transformedFunc = StringReplace[#4, {strippedIVar ~~ Whitespace ~~ \"(\" -> strippedIVar <> \"*(\", strippedIVar <> \"(\" -> strippedIVar <> \"*(\"}];Block[{x},{upperLimit, lowerLimit, func, iVar} = Map[ToExpression[#, TraditionalForm] &, {#2, #3, transformedFunc, strippedIVar}];func = ReplaceAll[func, iVar -> x];If[Or[Not[NumericQ[upperLimit]], Not[NumericQ[lowerLimit]]], Throw[\"Limits of integration must be real numbers\"]];If[PossibleZeroQ[Simplify[ (" + kTalker.executeCommand("density (g[x]^2 - f[x]^2)/2") + ") - func]],If[And[PossibleZeroQ[upperLimit - (" + kTalker.executeCommand("b") + ")], PossibleZeroQ[lowerLimit - (" + kTalker.executeCommand("a") + ")]],Throw[\"&#10003;\"],Throw[\"Your limits of integration are not correct\"]],If[PossibleZeroQ[Simplify[ (" + kTalker.executeCommand("density x (if[x] - ig[x])") + ") - func]],If[And[PossibleZeroQ[upperLimit - (" + kTalker.executeCommand("fb") + ")], PossibleZeroQ[lowerLimit - (" + kTalker.executeCommand("fa") + ")]],Throw[\"&#10003;\"],Throw[\"Your limits of integration are not correct\"]],Throw[\"The integrand is not correct\"]]]];];]) & @@";
 				ProblemDataPusher.problemTestsStorage.put(6, test);
 				break;
@@ -91,10 +91,24 @@ public class ProblemPuller
 		return reply;
 	}
 	
+	public String getProblemStatementAsStringV2(String course, String id)
+	{
+		String reply ="";
+		
+		return reply;
+	}
+	
 	public String getProblemQuestionsAsString(int id)
 	{
 		String reply="";
 		
 		return reply;
+	}
+	
+	public ProblemData getProblem(String course, String id)
+	{
+		ProblemData pData = new ProblemData();
+		
+		return pData;
 	}
 }

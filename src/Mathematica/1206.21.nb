@@ -10,14 +10,138 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[      2337,         74]
-NotebookOptionsPosition[      2025,         59]
-NotebookOutlinePosition[      2399,         75]
-CellTagsIndexPosition[      2356,         72]
+NotebookDataLength[     24840,        570]
+NotebookOptionsPosition[     24115,        541]
+NotebookOutlinePosition[     24489,        557]
+CellTagsIndexPosition[     24446,        554]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
 Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{
+   "Wraps", " ", "LaTeX", " ", "for", " ", "MathJax", " ", "rendering"}], 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"htmlLatex", "=", 
+     RowBox[{
+      RowBox[{"StringJoin", "[", 
+       RowBox[{
+       "\"\<<script type='math/tex'>\>\"", ",", "#", ",", 
+        "\"\<</script>\>\""}], "]"}], "&"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Wraps", " ", "LaTeX", " ", "for", " ", "MathJax", " ", "rendering", " ", 
+     "in", " ", "display", " ", "mode"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"htmlLatexDisplay", "=", 
+     RowBox[{
+      RowBox[{"StringJoin", "[", 
+       RowBox[{
+       "\"\<<script type='math/tex' mode = 'display'>\>\"", ",", "#", ",", 
+        "\"\<</script>\>\""}], "]"}], "&"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Wrap", " ", "the", " ", "text", " ", "in", " ", "appropriate", " ", 
+     "HTML", " ", "tags", " ", "to", " ", "be", " ", "displayed", " ", "as", 
+     " ", "a", " ", "problem", " ", "prompt"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"htmlPrompt", " ", "[", 
+      RowBox[{"title_String", ",", "body_String"}], "]"}], ":=", 
+     RowBox[{"StringJoin", "[", 
+      RowBox[{
+      "\"\<<div><h2>\>\"", "<>", "title", "<>", "\"\<</h2></div><div><p>\>\"",
+        "<>", "body", "<>", "\"\<</p></div>\>\""}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"htmlPrompt", " ", "[", "body_String", "]"}], ":=", 
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"\"\<<div><p>\>\"", "<>", "body", "<>", "\"\<</p></div>\>\""}], 
+      "]"}]}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Generate", " ", "an", " ", "input", " ", "field"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"htmlInputField", " ", "=", " ", 
+     RowBox[{"Function", "[", 
+      RowBox[{"fieldId", ",", 
+       RowBox[{
+       "\"\<<span class='inputfield' style='font-size: 100%; font-family: \
+STIXGeneral-Regular; ' contenteditable='true' fieldId = '\>\"", "<>", 
+        "fieldId", "<>", "\"\<'></span>\>\""}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Put", " ", "all", " ", "input", " ", "fields", " ", "together", " ", 
+     "and", " ", "supply", " ", "them", " ", "with", " ", 
+     RowBox[{"a", " ", "'"}], 
+     RowBox[{"Submit", "'"}], " ", "button"}], "*)"}], "\[IndentingNewLine]", 
+   
+   RowBox[{
+    RowBox[{"htmlInputFieldBuilder", " ", "=", " ", 
+     RowBox[{"Function", "[", 
+      RowBox[{
+       RowBox[{"{", " ", 
+        RowBox[{"problemId", ",", "prompt", ",", " ", "fields"}], "}"}], ",", 
+       "\[IndentingNewLine]", 
+       RowBox[{
+        RowBox[{"Return", "[", 
+         RowBox[{
+         "\"\<<div promptId = '\>\"", "<>", "problemId", "<>", 
+          "\"\<' class='inputbox'>\>\"", "<>", "prompt", "<>", 
+          "\"\<&nbsp;\>\"", "<>", "fields", "<>", 
+          "\"\<&nbsp;<input promptId = '\>\"", "<>", "problemId", "<>", 
+          "\"\<' class='evalButton' type='button' value='Submit' \
+/>&nbsp;<span id='resultsField\>\"", "<>", "problemId", "<>", 
+          "\"\<'></span></div>\>\""}], "]"}], ";"}]}], "\[IndentingNewLine]", 
+      "]"}]}], ";"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Transform", " ", "a", " ", "Mathematica", " ", "expression", " ", "into",
+      " ", "a", " ", "LaTeX", " ", 
+     RowBox[{"string", ".", " ", "A"}], " ", "few", " ", "helpful", " ", 
+     "substitutions", " ", "are", " ", "performed", " ", "for", " ", "a", " ",
+      "better", " ", "output"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"tFq", "=", 
+     RowBox[{
+      RowBox[{"StringReplace", "[", 
+       RowBox[{
+        RowBox[{"ToString", "[", 
+         RowBox[{
+          RowBox[{"#", "/.", 
+           RowBox[{
+            RowBox[{
+             RowBox[{"dummy", "'"}], "[", "_", "]"}], "\[Rule]", "1"}]}], ",",
+           "TeXForm"}], "]"}], ",", 
+        RowBox[{"{", 
+         RowBox[{
+          RowBox[{"\"\<==\>\"", "\[Rule]", "\"\<\[LongEqual]\>\""}], ",", 
+          RowBox[{"\"\<\[Equal]\>\"", "\[Rule]", "\"\<\[LongEqual]\>\""}], 
+          ",", 
+          RowBox[{"\"\<capitalC\>\"", "\[Rule]", "\"\<C\>\""}], ",", 
+          RowBox[{"\"\<zzone\>\"", "\[Rule]", "\"\<1\>\""}], ",", 
+          RowBox[{"\"\<dummy\>\"", "\[Rule]", "\"\<\>\""}], ",", 
+          RowBox[{"\"\<zdummy\>\"", "\[Rule]", "\"\<\>\""}], ",", 
+          RowBox[{"\"\<log\>\"", "\[Rule]", "\"\<ln\>\""}]}], "}"}]}], "]"}], 
+      "&"}]}], ";"}]}]}]], "Input",
+ InitializationCell->True,
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGAQBmIQHaVz+cO8Xa8cQw+mfwHRRybxcMwH0oubWzhBdLtj
+OC+I/rz7nRiIvnbprhSIvvOgWwZEH5heWr4ASAu6MFeB6Gqf+9zPgfQvWQkh
+ED2/sUEcRH94d10eRMft/2oNord8vuMHorOPvVwIolXmNKwAy/Np3APRbptL
+H4FoFssH/0F0249d7C+AtMTk9kQQfTP7byqI9lIPzALRwT5S+SD6xNmFJSD6
+qeYNMM3yfo/rKyC9I+J5KojOSJUoA9FsYSnlINru8OEaEG2j/rUORMszr2wF
+0S8iKnpA9Jr8XzpvgPQ39UZdEA0A/Ii0sg==
+  "]],
+
 Cell[BoxData[{
  RowBox[{
   RowBox[{
@@ -37,25 +161,383 @@ Cell[BoxData[{
       "opts___"}], "]"}], ":=", "\[IndentingNewLine]", 
     RowBox[{"Module", "[", "\[IndentingNewLine]", 
      RowBox[{
-      RowBox[{"{", "}"}], ","}], "\[IndentingNewLine]", "\[IndentingNewLine]",
-      "]"}]}], ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+      RowBox[{"{", 
+       RowBox[{"xmlResponse", ",", "\[IndentingNewLine]", 
+        RowBox[{"prompt", " ", "=", " ", "Null"}], ",", 
+        RowBox[{"numberOfTries", " ", "=", " ", "0"}], ",", 
+        RowBox[{"optionsString", " ", "=", "  ", "Null"}], ",", " ", 
+        RowBox[{"evalString", " ", "=", " ", "Null"}], ",", " ", 
+        RowBox[{"testString", "=", "Null"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"fetchPrompt", "=", "Null"}], ",", 
+        RowBox[{"supplyPrompts", "=", "Null"}], ",", 
+        RowBox[{"fetchOnlyIfRight", " ", "=", " ", "True"}], ",", 
+        RowBox[{"reFetchIfUpdate", " ", "=", " ", "True"}], ",", 
+        RowBox[{"dependencies", "=", "Null"}], ",", "\[IndentingNewLine]", 
+        " ", "a", ",", "b", ",", "u", ",", "uprime", ",", "f", ",", "F"}], 
+       "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{"Block", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x", ",", "uu", ",", "ff", ",", "FF"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{"F", "=", 
+          RowBox[{"RandomChoice", "[", 
+           RowBox[{"{", 
+            RowBox[{
+            "Exp", ",", "Tan", ",", "ArcTan", ",", "ArcSin", ",", "Log"}], 
+            "}"}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"u", "=", 
+          RowBox[{"RandomChoice", "[", 
+           RowBox[{"{", 
+            RowBox[{"Cos", ",", "Sin", ",", "Exp", ",", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"#", "^", "2"}], ")"}], "&"}], ",", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"#", "^", "3"}], ")"}], "&"}], ",", 
+             RowBox[{
+              RowBox[{"Sqrt", "[", "#", "]"}], "&"}]}], "}"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"a", ",", "b"}], "}"}], " ", "=", " ", 
+          RowBox[{"RandomChoice", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"1", ",", "2", ",", "3", ",", "4", ",", "5", ",", 
+              RowBox[{"1", "/", "2"}], ",", 
+              RowBox[{"3", "/", "2"}], ",", 
+              RowBox[{"1", "/", "3"}], ",", 
+              RowBox[{"5", "/", "3"}], ",", 
+              RowBox[{"4", "/", "3"}]}], "}"}], ",", "2"}], "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"f", "=", 
+          RowBox[{"D", "[", 
+           RowBox[{
+            RowBox[{"a", " ", 
+             RowBox[{"F", "[", 
+              RowBox[{"u", "[", 
+               RowBox[{"b", " ", "x"}], "]"}], "]"}]}], ",", "x"}], "]"}]}], 
+         ";", "\[IndentingNewLine]", 
+         RowBox[{"prompt", " ", "=", " ", 
+          RowBox[{"htmlPrompt", "[", 
+           RowBox[{"\"\<Integration by subsitution\>\"", ",", 
+            RowBox[{"\"\<Consider the integral \>\"", "<>", 
+             RowBox[{"htmlLatexDisplay", "[", 
+              RowBox[{
+               RowBox[{
+                RowBox[{"tFq", "[", 
+                 RowBox[{"Defer", "[", 
+                  RowBox[{"Integrate", "[", 
+                   RowBox[{"#", ",", "x"}], "]"}], "]"}], "]"}], "&"}], "[", 
+               "f", "]"}], "]"}]}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"optionsString", " ", "=", 
+          RowBox[{"ToString", "[", " ", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"uu", "\[Rule]", "u"}], ",", 
+              RowBox[{"ff", "\[Rule]", "f"}], ",", 
+              RowBox[{"FF", "\[Rule]", "F"}]}], "}"}], ",", "InputForm"}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"supplyPrompts", " ", "=", " ", 
+          RowBox[{"{", 
+           RowBox[{"\"\<21.1\>\"", ",", "\"\<21.2\>\""}], "}"}]}], ";", 
+         "\[IndentingNewLine]", "\[IndentingNewLine]", 
+         RowBox[{"xmlResponse", " ", "=", " ", 
+          RowBox[{
+           RowBox[{"XMLObject", "[", "\"\<Document\>\"", "]"}], "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{
+              RowBox[{"XMLObject", "[", "\"\<Declaration\>\"", "]"}], "[", 
+              RowBox[{
+               RowBox[{"\"\<Version\>\"", "\[Rule]", "\"\<1.0\>\""}], ",", 
+               RowBox[{"\"\<Encoding\>\"", "\[Rule]", "\"\<UTF-8\>\""}]}], 
+              "]"}], "}"}], ",", "\[IndentingNewLine]", 
+            RowBox[{"XMLElement", "[", 
+             RowBox[{"\"\<problemData\>\"", ",", 
+              RowBox[{"{", "}"}], ",", 
+              RowBox[{"{", "\[IndentingNewLine]", 
+               RowBox[{
+                RowBox[{"XMLElement", "[", 
+                 RowBox[{"\"\<prompt\>\"", ",", 
+                  RowBox[{"{", "}"}], ",", 
+                  RowBox[{"{", 
+                   RowBox[{
+                    RowBox[{"XMLObject", "[", "\"\<CDATASection\>\"", "]"}], 
+                    "[", "prompt", "]"}], "}"}]}], "]"}], ",", 
+                "\[IndentingNewLine]", 
+                RowBox[{"XMLElement", "[", 
+                 RowBox[{"\"\<optionsString\>\"", ",", 
+                  RowBox[{"{", "}"}], ",", 
+                  RowBox[{"{", 
+                   RowBox[{
+                    RowBox[{"XMLObject", "[", "\"\<CDATASection\>\"", "]"}], 
+                    "[", "optionsString", "]"}], "}"}]}], "]"}], ",", 
+                "\[IndentingNewLine]", 
+                RowBox[{"XMLElement", "[", 
+                 RowBox[{"\"\<supplyPrompts\>\"", ",", 
+                  RowBox[{"{", "}"}], ",", 
+                  RowBox[{"Map", "[", 
+                   RowBox[{
+                    RowBox[{
+                    RowBox[{"XMLElement", "[", 
+                    RowBox[{"\"\<prompt\>\"", ",", 
+                    RowBox[{"{", "}"}], ",", 
+                    RowBox[{"{", "#", "}"}]}], "]"}], "&"}], ",", 
+                    "supplyPrompts"}], "]"}]}], "]"}]}], 
+               "\[IndentingNewLine]", "}"}]}], "]"}], "\[IndentingNewLine]", 
+            ",", 
+            RowBox[{"{", "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"Return", "[", 
+          RowBox[{"ExportString", "[", 
+           RowBox[{"xmlResponse", ",", "\"\<XML\>\"", ",", 
+            RowBox[{"\"\<Annotations\>\"", " ", "\[Rule]", 
+             RowBox[{"{", 
+              RowBox[{
+              "\"\<DocumentHeader\>\"", ",", "\"\<XMLDeclaration\>\""}], 
+              "}"}]}]}], "]"}], "]"}], ";"}]}], "\[IndentingNewLine]", 
+       "]"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"makeproblem", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"\"\<1206\>\"", ",", "\"\<21.1\>\""}], "}"}], ",", "str_", ",",
+       "opts___"}], "]"}], ":=", "\[IndentingNewLine]", 
+    RowBox[{"Module", "[", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"xmlResponse", ",", "\[IndentingNewLine]", 
+        RowBox[{"prompt", " ", "=", " ", "Null"}], ",", 
+        RowBox[{"numberOfTries", " ", "=", " ", "0"}], ",", 
+        RowBox[{"optionsString", " ", "=", "  ", "Null"}], ",", " ", 
+        RowBox[{"evalString", " ", "=", " ", "Null"}], ",", " ", 
+        RowBox[{"testString", "=", "Null"}], ",", "\[IndentingNewLine]", 
+        RowBox[{"fetchPrompt", "=", "Null"}], ",", 
+        RowBox[{"supplyPrompts", "=", "Null"}], ",", 
+        RowBox[{"fetchOnlyIfRight", " ", "=", " ", "True"}], ",", 
+        RowBox[{"reFetchIfUpdate", " ", "=", " ", "True"}], ",", 
+        RowBox[{"dependencies", "=", "Null"}], ",", "\[IndentingNewLine]", 
+        " ", "a", ",", "b", ",", "u", ",", "uprime", ",", "f", ",", "F"}], 
+       "}"}], ",", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"Block", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"x", ",", "uu", ",", "ff", ",", "FF"}], "}"}], ",", 
+         "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"u", ",", "f", ",", "F"}], "}"}], "=", 
+           RowBox[{"ReplaceAll", "[", 
+            RowBox[{
+             RowBox[{"{", 
+              RowBox[{"uu", ",", "ff", ",", "FF"}], "}"}], ",", "opts"}], 
+            "]"}]}], ";", "\[IndentingNewLine]", 
+          RowBox[{"prompt", " ", "=", 
+           RowBox[{"StringJoin", "[", "\[IndentingNewLine]", 
+            RowBox[{
+             RowBox[{
+             "htmlPrompt", "[", " ", 
+              "\"\<Suggest a u-substitution that will simplify the integral \
+and write the transformed integral.\>\"", "]"}], ",", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{"htmlInputFieldBuilder", "[", 
+               RowBox[{"\"\<1206.21.1\>\"", ",", "\"\<u(x) = \>\"", ",", 
+                RowBox[{"htmlInputField", "[", "\"\<uSub\>\"", "]"}]}], "]"}],
+               ";"}]}], "\[IndentingNewLine]", "]"}]}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"dependencies", " ", "=", " ", 
+           RowBox[{"{", "\"\<21\>\"", "}"}]}]}]}], "\[IndentingNewLine]", 
+        "]"}], ";"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
  RowBox[{
   RowBox[{
    RowBox[{"makeproblem", "[", 
     RowBox[{
      RowBox[{"{", 
-      RowBox[{"\"\<1206\>\"", ",", "\"\<21.1\>\""}], "}"}], ",", "str_", ",", 
+      RowBox[{"\"\<1206\>\"", ",", "\"\<21.2\>\""}], "}"}], ",", "str_", ",", 
      "opts___"}], "]"}], ":=", "\[IndentingNewLine]", 
    RowBox[{"Module", "[", "\[IndentingNewLine]", 
     RowBox[{
-     RowBox[{"{", "}"}], ","}], "\[IndentingNewLine]", "]"}]}], 
+     RowBox[{"{", 
+      RowBox[{"xmlResponse", ",", "\[IndentingNewLine]", 
+       RowBox[{"prompt", " ", "=", " ", "Null"}], ",", 
+       RowBox[{"numberOfTries", " ", "=", " ", "0"}], ",", 
+       RowBox[{"optionsString", " ", "=", "  ", "Null"}], ",", " ", 
+       RowBox[{"evalString", " ", "=", " ", "Null"}], ",", " ", 
+       RowBox[{"testString", "=", "Null"}], ",", "\[IndentingNewLine]", 
+       RowBox[{"fetchPrompt", "=", "Null"}], ",", 
+       RowBox[{"supplyPrompts", "=", "Null"}], ",", 
+       RowBox[{"fetchOnlyIfRight", " ", "=", " ", "True"}], ",", 
+       RowBox[{"reFetchIfUpdate", " ", "=", " ", "True"}], ",", 
+       RowBox[{"dependencies", "=", "Null"}], ",", "\[IndentingNewLine]", " ",
+        "a", ",", "b", ",", "u", ",", "uprime", ",", "f", ",", "F"}], "}"}], 
+     ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{"Block", "[", 
+       RowBox[{
+        RowBox[{"{", 
+         RowBox[{"x", ",", "uu", ",", "ff", ",", "FF"}], "}"}], ",", 
+        "\[IndentingNewLine]", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"{", 
+           RowBox[{"u", ",", "f", ",", "F"}], "}"}], "=", 
+          RowBox[{"ReplaceAll", "[", 
+           RowBox[{
+            RowBox[{"{", 
+             RowBox[{"uu", ",", "ff", ",", "FF"}], "}"}], ",", "opts"}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
+         RowBox[{"prompt", " ", "=", 
+          RowBox[{"StringJoin", "[", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"htmlInputFieldBuilder", "[", 
+             RowBox[{
+             "\"\<1206.21.2\>\"", ",", "\"\<\>\"", ",", 
+              "\[IndentingNewLine]", 
+              "\"\<<span style='display: inline-block; position: relative; \
+font-size: 104%;'>\n<span class='mo' style='font-family: STIXIntegralsD; \
+vertical-align: -0.615em; '>\[Integral]</span>\n<span class='mrow'>\n<span \
+fieldId = 'integrand' class='mi inputfield' contenteditable='true' \
+style='font-family: STIXGeneral-Regular; '></span></span>\n<span \
+class='mspace' style='height: 0em; vertical-align: 0em; width: 0.188em; \
+display: inline-block; overflow: hidden; '></span>\n<span class='mi' \
+style='font-family: STIXGeneral-Italic; '>d</span>\n<span class='mrow'><span \
+fieldId = 'variable' class='mi inputfield' contenteditable='true' \
+style='font-family: STIXGeneral-Regular; '></span></span></span>\>\""}], 
+             "]"}], ";"}], "\[IndentingNewLine]", "]"}]}], ";", 
+         "\[IndentingNewLine]", 
+         RowBox[{"dependencies", " ", "=", " ", 
+          RowBox[{"{", 
+           RowBox[{"\"\<21\>\"", ",", "\"\<21.1\>\""}], "}"}]}]}]}], 
+       "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", "]"}]}], 
   ";"}]}], "Input",
  InitializationCell->True,
  CellChangeTimes->{{3.587339917531764*^9, 3.587339925270708*^9}, {
    3.587340005807341*^9, 3.587340027222621*^9}, {3.587340101878414*^9, 
    3.5873401834756527`*^9}, {3.5873402236769867`*^9, 3.587340227245014*^9}, {
    3.5873403169632063`*^9, 3.587340322796528*^9}, {3.5873403641724663`*^9, 
-   3.587340371333776*^9}, 3.587342656681733*^9}]
+   3.587340371333776*^9}, 3.587342656681733*^9, {3.587501522722876*^9, 
+   3.5875015609191017`*^9}, {3.587501864294634*^9, 3.587501895942621*^9}, {
+   3.5875019643144073`*^9, 3.587502055262916*^9}, {3.5875020997524643`*^9, 
+   3.587502373144576*^9}, {3.587507015251029*^9, 3.587507093987754*^9}, {
+   3.5875071974474583`*^9, 3.587507198677642*^9}, {3.5875072299961987`*^9, 
+   3.587507235026651*^9}, {3.587507300851646*^9, 3.5875073284980383`*^9}, {
+   3.587507378884282*^9, 3.5875074244102173`*^9}, {3.5875075122264147`*^9, 
+   3.587507682531983*^9}, {3.587507735147399*^9, 3.587507842375972*^9}, {
+   3.58750834138474*^9, 3.587508358054991*^9}, {3.587509835432027*^9, 
+   3.587510043218858*^9}, {3.58751007657164*^9, 3.5875101072920427`*^9}, {
+   3.587510210754038*^9, 3.5875102166262913`*^9}, {3.5875103620849524`*^9, 
+   3.587510409555141*^9}, {3.58751053136311*^9, 3.587510546133466*^9}, {
+   3.587510646865971*^9, 3.5875106475137787`*^9}, {3.5875113148456306`*^9, 
+   3.5875113403361692`*^9}, {3.587583103287849*^9, 3.587583140247533*^9}, {
+   3.587583178077965*^9, 3.587583179705762*^9}, {3.5875832377713213`*^9, 
+   3.5875832526004353`*^9}, {3.587583805575141*^9, 3.587583869596266*^9}, {
+   3.587584068090228*^9, 3.587584090257498*^9}, {3.587584125129847*^9, 
+   3.587584128349573*^9}, {3.587584654784918*^9, 3.5875846573907213`*^9}, {
+   3.58758537948625*^9, 3.587585464951527*^9}, {3.587585528428452*^9, 
+   3.5875855602786407`*^9}, {3.587586066954554*^9, 3.587586165668468*^9}, {
+   3.587586264238019*^9, 3.5875862823912697`*^9}, {3.587658569301952*^9, 
+   3.5876586451611557`*^9}, {3.5876617792553053`*^9, 3.587661890037272*^9}, {
+   3.587661923637331*^9, 3.5876619360411177`*^9}, {3.5876622494445*^9, 
+   3.587662303970641*^9}, {3.5876623627262783`*^9, 3.5876623871314297`*^9}, {
+   3.587664208725009*^9, 3.587664230948765*^9}, {3.5876644683876534`*^9, 
+   3.587664483832061*^9}, {3.587664675948036*^9, 3.587664679836701*^9}, {
+   3.587664737201818*^9, 3.587664740138328*^9}, {3.5876661912850523`*^9, 
+   3.587666275434157*^9}, {3.5876663125366993`*^9, 3.58766633271947*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"makeproblem", "[", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{"\"\<1206\>\"", ",", "\"\<21\>\""}], "}"}], ",", "\"\<A\>\""}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.587510121583062*^9, 3.587510131675016*^9}}],
+
+Cell[BoxData["\<\"<?xml version='1.0' encoding='UTF-8'?>\\n<problemData>\\n \
+<prompt><![CDATA[<div><h2>Integration by \
+subsitution</h2></div><div><p>Consider the integral <script type='math/tex' \
+mode = 'display'>\\\\int \\\\frac{32}{3} x \\\\sec ^2\\\\left(\\\\frac{16 \
+x^2}{9}\\\\right) \\\\, dx</script></p></div>]]></prompt>\\n \
+<optionsString><![CDATA[{uu -> (#1^2 & ), ff -> (32*x*Sec[(16*x^2)/9]^2)/3, \
+FF -> Tan}]]></optionsString>\\n <supplyPrompts>\\n  <prompt>21.1</prompt>\\n \
+ <prompt>21.2</prompt>\\n </supplyPrompts>\\n</problemData>\"\>"], "Output",
+ CellChangeTimes->{
+  3.587510134748726*^9, 3.5875103752030687`*^9, 3.587510413541122*^9, 
+   3.587510553114787*^9, 3.587510653053445*^9, 3.5875113458151493`*^9, 
+   3.587583184571925*^9, {3.58758324567507*^9, 3.5875832569455*^9}, 
+   3.587583875113502*^9, 3.587584102146574*^9, 3.587584133575029*^9, 
+   3.587584662389461*^9, 3.587585454805757*^9, 3.587658611295535*^9, 
+   3.587658954193129*^9, {3.587666291188376*^9, 3.5876663470518427`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"ExportString", "[", 
+  RowBox[{
+   RowBox[{"XMLElement", "[", 
+    RowBox[{"\"\<book\>\"", ",", 
+     RowBox[{"{", 
+      RowBox[{"\"\<type\>\"", "\[Rule]", "\"\<novel\>\""}], "}"}], ",", 
+     RowBox[{"{", "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<title\>\"", ",", 
+         RowBox[{"{", "}"}], ",", 
+         RowBox[{"{", "\"\<Moby Dick\>\"", "}"}]}], "]"}], ",", 
+       RowBox[{"XMLElement", "[", 
+        RowBox[{"\"\<author\>\"", ",", 
+         RowBox[{"{", 
+          RowBox[{
+           RowBox[{"\"\<born\>\"", "\[Rule]", "\"\<1819\>\""}], ",", 
+           RowBox[{"\"\<died\>\"", "\[Rule]", "\"\<1891\>\""}]}], "}"}], ",", 
+         
+         RowBox[{"{", "\[IndentingNewLine]", 
+          RowBox[{"XMLElement", "[", 
+           RowBox[{"\"\<name\>\"", ",", 
+            RowBox[{"{", "}"}], ",", 
+            RowBox[{"{", "\[IndentingNewLine]", 
+             RowBox[{
+              RowBox[{"XMLElement", "[", 
+               RowBox[{"\"\<first\>\"", ",", 
+                RowBox[{"{", "}"}], ",", 
+                RowBox[{"{", "\"\<Herman\>\"", "}"}]}], "]"}], ",", 
+              "\[IndentingNewLine]", 
+              RowBox[{"XMLElement", "[", 
+               RowBox[{"\"\<last\>\"", ",", 
+                RowBox[{"{", "}"}], ",", 
+                RowBox[{"{", "\"\<Melville\>\"", "}"}]}], "]"}]}], "}"}]}], 
+           "]"}], "}"}]}], "]"}]}], "}"}]}], "]"}], ",", "\"\<XML\>\""}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.587510456593967*^9, 3.587510467550034*^9}}],
+
+Cell[BoxData["\<\"<book type='novel'>\\n <title>Moby Dick</title>\\n <author \
+born='1819'\\n     died='1891'>\\n  <name>\\n   <first>Herman</first>\\n   \
+<last>Melville</last>\\n  </name>\\n </author>\\n</book>\"\>"], "Output",
+ CellChangeTimes->{3.5875104681694508`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Options", "[", "XMLElement", "]"}]], "Input",
+ CellChangeTimes->{{3.587582716704311*^9, 3.58758272442656*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", "}"}]], "Output",
+ CellChangeTimes->{3.587582725171533*^9}]
+}, Open  ]]
 },
 AutoGeneratedPackage->Automatic,
 WindowSize->{1317, 923},
@@ -74,8 +556,22 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[545, 20, 1476, 37, 193, "Input",
- InitializationCell->True]
+Cell[545, 20, 5162, 122, 343, "Input",
+ InitializationCell->True],
+Cell[5710, 144, 14980, 310, 1047, "Input",
+ InitializationCell->True],
+Cell[CellGroupData[{
+Cell[20715, 458, 233, 6, 27, "Input"],
+Cell[20951, 466, 1018, 14, 163, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[22006, 485, 1556, 37, 88, "Input"],
+Cell[23565, 524, 273, 3, 163, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[23875, 532, 134, 2, 27, "Input"],
+Cell[24012, 536, 87, 2, 27, "Output"]
+}, Open  ]]
 }
 ]
 *)
