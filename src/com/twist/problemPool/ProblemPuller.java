@@ -31,7 +31,7 @@ public class ProblemPuller
 				test = "Catch[If[Not[SyntaxQ[#2]], Throw[\"Syntax Error\"]];   If[PossibleZeroQ[Simplify[" + kTalker.executeCommand("Normal[Series[func, {x, center, degree}]]") + " - ToExpression[StringReplace[StringReplace[#2, WordBoundary ~~ \"e\" ~~ WordBoundary -> \"E\"], {WordBoundary ~~ \"x\" ~~ Whitespace ~~ \"(\" -> \"x*(\", WordBoundary ~~ \"x(\" -> \"x*(\", WordBoundary ~~ \"E\" ~~ Whitespace ~~ \"(\" -> \"E*(\", WordBoundary ~~ \"E(\" -> \"E*(\"}],TraditionalForm]]], Throw[\"&#10003;\"], Throw[\"&#10007;\"]] ] &@@";
 				pData.setTestString(test);
 				
-				pPusher.push(1,pData);
+				pPusher.push("1",pData);
 				ProblemDataPusher.problemTestsStorage.put(id, test);
 				break;
 			case 002:
@@ -43,7 +43,7 @@ public class ProblemPuller
 				
 				temp = "<div promptId = '2'><h2>Solving Linear Systems</h2></div><div><p>Let <script type=\"math/tex\">A</script> be a 3&times;3 matrix</p><p><div style='margin-left:auto;margin-right:auto'><script type=\"math/tex\">" + kTalker.executeCommand("TeXForm[MatrixForm[A]]") + "</script></div></p></div>";
 				pData.setPrompt(temp);
-				pPusher.push(2,pData);
+				pPusher.push("2",pData);
 				
 				reply = temp;
 
@@ -55,7 +55,7 @@ public class ProblemPuller
 
 				test = "Function[{total,rank},Catch[If[Not[SyntaxQ[rank]],Throw[\"Syntax Error\"]];Module[{inRank},inRank = ToExpression[rank];If[Not[IntegerQ[inRank]], Throw[\"Rank must be an integer.\"]];If[inRank < 0, Throw[\"Rank must be a non-negative integer.\"]];If[PossibleZeroQ[" + kTalker.executeCommand("rank") + "-inRank], Throw[\"&#10003;\"], Throw[\"&#10007;\"]]]]] @@";
 				pData.setTestString(test);
-				pPusher.push(3,pData);
+				pPusher.push("3",pData);
 				ProblemDataPusher.problemTestsStorage.put(3, test);
 
 				pData = new ProblemData();
@@ -66,7 +66,7 @@ public class ProblemPuller
 
 				test = "(Catch[Scan[If[Not[SyntaxQ[#]], Throw[\"Syntax error is found in \" <> #]] &, {##2}];Module[{exprList, i},exprList = Map[ToExpression, {##2}];For[i = 1, i <= #1, i++,If[Not[VectorQ[exprList[[i]], NumericQ]], Throw[\"Answer (\" <> ToString[i] <> \") is not a valid vector\"]];If[Length[exprList[[i]]] != 3, Throw[\"Answer (\" <> ToString[i] <> \") is not a three-dimensional vector\"]];If[Norm[exprList[[i]]] < 10^(-6), Throw[\"Your answer (\" <> ToString[i] <> \") seems to be a zero vector\"]]];If[3-#1 != " + kTalker.executeCommand("rank") + ", Throw[\"You have provided an incorrect number of solutions (either too many, or too few).\"]];If[" + kTalker.executeCommand("rank") + " == 1,If[MatrixRank[exprList, Tolerance -> 10^(-6)] < 2, Throw[\"You must provide linearly independent vectors\"]];If[Norm[(" + kTalker.executeCommand("A") + ").exprList[[1]]] > 10^(-6), Throw[\"Your answer (1) does not seem to be a solution\"]];If[Norm[(" + kTalker.executeCommand("A") + ").exprList[[2]]] > 10^(-6), Throw[\"Your answer (2) does not seem to be a solution\"]];Throw[\"&#10003;\"];,If[Norm[(" + kTalker.executeCommand("A") + ").exprList[[1]]] > 10^(-6), Throw[\"Your answer (1) does not seem to be a solution\"]];Throw[\"&#10003;\"];]];]) & @@";
 				pData.setTestString(test);
-				pPusher.push(4,pData);
+				pPusher.push("4",pData);
 				ProblemDataPusher.problemTestsStorage.put(4, test);
 				break;
 			case 003:
@@ -77,7 +77,7 @@ public class ProblemPuller
 				String graphString=kTalker.evaluateToString("ExportString[graph, \"SVG\"]");
 
 				reply = "<div promptId = '5'><h2>Integrals</h2></div><div promptId = '5'><p>Let the region of density <script type=\"math/tex\">\\delta = " + kTalker.executeCommand("TeXForm[density]") + "</script> in <script type=\"math/tex\"> x y</script>-plane be bounded by two functions <script type=\"math/tex\"> f(x) = " + kTalker.executeCommand("TeXForm[TraditionalForm[f[x]]]") + "</script> and <script type=\"math/tex\"> g(x) = " + kTalker.executeCommand("TeXForm[TraditionalForm[g[x]]]") + "</script></p><div>" + graphString + "</div></div>";
-				reply+= "<div><h2>Center of Mass</h2></div><div promptId = '6'><p>Set up the integral for computing the moment <script type=\"math/tex\">M_x</script> about the <script type=\"math/tex\">x</script>-axis (you may use either vertical or horizontal slices)</p><div promptId = '6' class='inputbox'><script type=\"math/tex\">M_{x}=</script>&nbsp;<span style='display: inline-block; position: relative; font-size: 104%;'><span class='msubsup' style='display: inline-block; position: relative;'><span class='mo' style='font-family: STIXIntegralsD; vertical-align: -0.615em; '>∫</span><span style='display:inline-block; '><span class='mrow' style='display:block; position:relative; left:0.5em;'><span fieldId = '1' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span><span class='mrow'  style='display:block; position:relative; top: 1.1em; left: -0.2em;'><span fieldId = '2' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span>	</span>	</span><span class='mrow'><span fieldId = '3' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span><span class='mspace' style='height: 0em; vertical-align: 0em; width: 0.188em; display: inline-block; overflow: hidden; '></span><span class='mi' style='font-family: STIXGeneral-Italic; '>d</span><span class='mrow'><span fieldId = '4' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span></span>&nbsp;<input promptId = '6' class=\"evalButton\" type=\"button\" value=\"Submit\" />&nbsp;<span id='resultsField6'></span></div></div>";
+				reply+= "<div><h2>Center of Mass</h2></div><div promptId = '6'><p>Set up the integral for computing the moment <script type=\"math/tex\">M_x</script> about the <script type=\"math/tex\">x</script>-axis (you may use either vertical or horizontal slices)</p><div promptId = '6' class='inputbox'><script type=\"math/tex\">M_{x}=</script>&nbsp;<span style='display: inline-block; position: relative; font-size: 104%;'><span class='msubsup' style='display: inline-block; position: relative;'><span class='mo' style='font-family: STIXIntegralsD; vertical-align: -0.615em; '>&#x222B;</span><span style='display:inline-block; '><span class='mrow' style='display:block; position:relative; left:0.5em;'><span fieldId = '1' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span><span class='mrow'  style='display:block; position:relative; top: 1.1em; left: -0.2em;'><span fieldId = '2' class='mn inputfield' contenteditable='true' style='font-size: 70.7%; font-family: STIXGeneral-Regular; '></span></span>	</span>	</span><span class='mrow'><span fieldId = '3' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span><span class='mspace' style='height: 0em; vertical-align: 0em; width: 0.188em; display: inline-block; overflow: hidden; '></span><span class='mi' style='font-family: STIXGeneral-Italic; '>d</span><span class='mrow'><span fieldId = '4' class='mi inputfield' contenteditable='true' style='font-family: STIXGeneral-Regular; '></span></span></span>&nbsp;<input promptId = '6' class=\"evalButton\" type=\"button\" value=\"Submit\" />&nbsp;<span id='resultsField6'></span></div></div>";
 				test = "(Catch[Scan[If[Not[SyntaxQ[#]], Throw[\"Syntax error is found in '\" <> # <> \"'\"]] &, {##2}];Module[{upperLimit, lowerLimit, func, iVar, strippedIVar, transformedFunc},strippedIVar = StringReplace[#5, Whitespace -> \"\"];If[Or[StringLength[strippedIVar] > 1, StringLength[strippedIVar] < 1, Not[LetterQ[strippedIVar]]], Throw[\"Integration variable must be a single letter\"]];transformedFunc = StringReplace[#4, {strippedIVar ~~ Whitespace ~~ \"(\" -> strippedIVar <> \"*(\", strippedIVar <> \"(\" -> strippedIVar <> \"*(\"}];Block[{x},{upperLimit, lowerLimit, func, iVar} = Map[ToExpression[#, TraditionalForm] &, {#2, #3, transformedFunc, strippedIVar}];func = ReplaceAll[func, iVar -> x];If[Or[Not[NumericQ[upperLimit]], Not[NumericQ[lowerLimit]]], Throw[\"Limits of integration must be real numbers\"]];If[PossibleZeroQ[Simplify[ (" + kTalker.executeCommand("density (g[x]^2 - f[x]^2)/2") + ") - func]],If[And[PossibleZeroQ[upperLimit - (" + kTalker.executeCommand("b") + ")], PossibleZeroQ[lowerLimit - (" + kTalker.executeCommand("a") + ")]],Throw[\"&#10003;\"],Throw[\"Your limits of integration are not correct\"]],If[PossibleZeroQ[Simplify[ (" + kTalker.executeCommand("density x (if[x] - ig[x])") + ") - func]],If[And[PossibleZeroQ[upperLimit - (" + kTalker.executeCommand("fb") + ")], PossibleZeroQ[lowerLimit - (" + kTalker.executeCommand("fa") + ")]],Throw[\"&#10003;\"],Throw[\"Your limits of integration are not correct\"]],Throw[\"The integrand is not correct\"]]]];];]) & @@";
 				ProblemDataPusher.problemTestsStorage.put(6, test);
 				break;
@@ -93,7 +93,14 @@ public class ProblemPuller
 	
 	public String getProblemStatementAsStringV2(String course, String id)
 	{
+		KernelTalker kTalker = new KernelTalker();
+		ProblemDataPusher pPusher = new ProblemDataPusher();
 		String reply ="";
+		
+		kTalker.executeCommand("SetDirectory[\"/Users/evgeny/Google Drive/Eclipse Workspace/twist/src/Mathematica\"]");
+		reply = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+course+"\", \""+id+"\"}, \"A\"]");
+		reply +=kTalker.evaluateToString("makeproblem[{\""+course+"\", \""+id+".1\"}, \"A\"]");
+		reply +=kTalker.evaluateToString("makeproblem[{\""+course+"\", \""+id+".2\"}, \"A\"]");
 		
 		return reply;
 	}

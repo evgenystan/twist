@@ -31,10 +31,13 @@ public class CheckAnswers extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    private String getDependencies(int id,KernelTalker kTalker)
+    private String getDependencies(String id,KernelTalker kTalker)
     {
     	int i;
-    	ProblemData pData = ProblemDataPusher.problemDataStorage.get(id);
+    	
+    	ProblemDataPusher pPusher = new ProblemDataPusher();
+    	ProblemData pData = pPusher.get(id);
+    	
     	String args;
     	
 		String evalString=pData.evalString;
@@ -75,7 +78,7 @@ public class CheckAnswers extends HttpServlet {
 		response.setContentType("text/plain");
 		
 		int id=Integer.parseInt(request.getParameter("id"));
-		String args="",evalString=ProblemDataPusher.problemEvalStringStorage.get(id);
+		String 	args="";
 		String test=ProblemDataPusher.problemTestsStorage.get(id);
 		int i,numberOfFields=Integer.parseInt(request.getParameter("total"));
 
@@ -96,7 +99,54 @@ public class CheckAnswers extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
+		response.setContentType("text/plain");
+		String id=request.getParameter("id");
+		String course=request.getParameter("course");
+
+		if (id == null)
+		{
+		}
+		else if (course == null)
+		{
+			int intId = Integer.parseInt(request.getParameter("id"));
+			
+			String 	args = "", 
+					evalString = ProblemDataPusher.problemDataStorage.get(intId);
+			String test = ProblemDataPusher.problemTestsStorage.get(intId);
+			int i, 
+				numberOfFields = Integer.parseInt(request.getParameter("total"));
+
+			args = String.valueOf(numberOfFields);
+			for (i = 1; i <= numberOfFields; i++)
+			{
+				args += ",\"" + request.getParameter("f" + i) + "\"";
+			}
+			args = "{" + args;
+			args += "}";
+
+			PrintWriter out = response.getWriter();
+			KernelTalker kTalker = new KernelTalker();
+			// out.print(test+args+"\n");
+			out.print("<p>" + kTalker.executeCommand(test + args) + "</p><p>"+ test + "</p>");
+			out.close();
+		}
+		else
+		{
+			String test;
+			ProblemData pData;
+			ProblemDataPusher pPusher = new ProblemDataPusher();
+			pData = pPusher.get(course + "." + id);
+			
+			if(pData != null)
+			{
+				test = pData.getTestString();
+			}
+		}
+
+/*
+		
 		int id=Integer.parseInt(request.getParameter("id"));
 		ProblemData pData = ProblemDataPusher.problemDataStorage.get(id);
 		String args="";
@@ -254,7 +304,7 @@ public class CheckAnswers extends HttpServlet {
 	//		out.print(test+args+"\n");
 			out.print("<p>" + kTalker.executeCommand(test+args) + "</p><p>" + test + "</p>");
 			out.close();
-		}
+		}*/
 	}
 
 }

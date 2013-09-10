@@ -6,14 +6,14 @@ public class ProblemDataPusher
 {
 	static HashMap<Integer,String> problemDataStorage = new HashMap<Integer,String>();
 	static HashMap<Integer,String> problemTestsStorage = new HashMap<Integer,String>();
-	static private HashMap<Integer,ProblemData> problemStorage = new HashMap<Integer,ProblemData>();
+	static private HashMap<String,ProblemData> problemStorage = new HashMap<String,ProblemData>();
 	
-	public void push(int key, ProblemData pData)
+	public void push(String key, ProblemData pData)
 	{
 		problemStorage.put(key, pData);
 	}
 	
-	public ProblemData get(int key)
+	public ProblemData get(String key)
 	{
 		return problemStorage.get(key);
 	}
