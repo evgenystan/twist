@@ -2,17 +2,14 @@ package com.twist.problemPool;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import com.twist.kernelUtilities.KernelTalker;
 
@@ -103,45 +100,100 @@ public class CheckAnswers extends HttpServlet {
 	{
 		response.setContentType("text/plain");
 		String id=request.getParameter("id");
-		String course=request.getParameter("course");
-
+		KernelTalker kTalker = new KernelTalker();
+		
 		if (id == null)
 		{
 		}
-		else if (course == null)
-		{
-			int intId = Integer.parseInt(request.getParameter("id"));
-			
-			String 	args = "", 
-					evalString = ProblemDataPusher.problemDataStorage.get(intId);
-			String test = ProblemDataPusher.problemTestsStorage.get(intId);
-			int i, 
-				numberOfFields = Integer.parseInt(request.getParameter("total"));
-
-			args = String.valueOf(numberOfFields);
-			for (i = 1; i <= numberOfFields; i++)
-			{
-				args += ",\"" + request.getParameter("f" + i) + "\"";
-			}
-			args = "{" + args;
-			args += "}";
-
-			PrintWriter out = response.getWriter();
-			KernelTalker kTalker = new KernelTalker();
-			// out.print(test+args+"\n");
-			out.print("<p>" + kTalker.executeCommand(test + args) + "</p><p>"+ test + "</p>");
-			out.close();
-		}
 		else
 		{
-			String test;
-			ProblemData pData;
 			ProblemDataPusher pPusher = new ProblemDataPusher();
-			pData = pPusher.get(course + "." + id);
+			ProblemData pData = pPusher.get(id);
 			
-			if(pData != null)
+			if(pData == null)
 			{
-				test = pData.getTestString();
+				int intId = Integer.parseInt(request.getParameter("id"));
+				
+				String 	args = "", 
+						evalString = ProblemDataPusher.problemDataStorage.get(intId);
+				String test = ProblemDataPusher.problemTestsStorage.get(intId);
+				int i, 
+					numberOfFields = Integer.parseInt(request.getParameter("total"));
+	
+				args = String.valueOf(numberOfFields);
+				for (i = 1; i <= numberOfFields; i++)
+				{
+					args += ",\"" + request.getParameter(String.valueOf(i)) + "\"";
+				}
+				args = "{" + args;
+				args += "}";
+	
+				PrintWriter out = response.getWriter();
+				out.print(kTalker.evaluateToString(test + args));
+//				out.print(test+args+"\n");
+//				out.print("<p>" + kTalker.executeCommand(test + args) + "</p><p>"+ test + "</p>");
+				out.close();
+			}
+			else
+			{
+				Map<String,String[]> pars = request.getParameterMap();
+				
+				if(pData != null)
+				{
+					String test = pData.getTestString();
+					String key, args = "",fieldKey,fieldValue;
+					String[] value;
+					
+					int argcount = 0;
+					
+					for (Map.Entry<String, String[]> entry : pars.entrySet()) 
+					{
+					    key = entry.getKey();
+					    if((key.equals("total"))||(key.equals("id")))
+					    {
+					    	continue;
+					    }
+						if(argcount>0) args +=", ";
+						argcount++;
+					    value = entry.getValue();
+					    args += "\"" + key + "\" -> \"" + value[0] + "\"";
+					    pData.addAnswerField(key,value[0]);
+					}
+					
+					if(!pData.getDependencies().isEmpty())
+					{
+						ArrayList<String> stack = new ArrayList<String>();
+						ProblemData depData;
+						String depId;
+						
+						stack.addAll(pData.getDependencies());
+						
+						while(!stack.isEmpty())
+						{
+							depId = stack.remove(0);
+							depData = pPusher.get(depId);
+							
+							for (Map.Entry<String, String> entry : depData.getAnswerFields().entrySet()) 
+							{
+								if(argcount>0) args +=", ";
+								argcount++;
+							    fieldKey = entry.getKey();
+							    fieldValue = entry.getValue();
+							    args += "\"" + fieldKey + "\" -> \"" + fieldValue + "\"";
+							}
+							if(!depData.getDependencies().isEmpty()) {stack.addAll(depData.getDependencies());}
+						}
+					}
+					
+					args = "{" + args + "}";
+					
+					PrintWriter out = response.getWriter();
+					
+					out.print(kTalker.evaluateToString(test + args));
+//					out.print("<p>" + kTalker.evaluateToString(test+args) + "</p><p>"+ test + args + "</p>");
+					out.close();
+					
+				}
 			}
 		}
 

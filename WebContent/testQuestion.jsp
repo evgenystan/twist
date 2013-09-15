@@ -4,6 +4,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <style>
+body
+{
+	background-color:#eeeeff;
+}
+#content
+{
+	width:50em;
+	min-height:500px;
+	border-radius:1em;
+	padding:1em;
+	margin:0px auto 0px;
+	background-color:white;
+	box-shadow:0px 0.3em .7em #aaa;
+}
 .inputbox {vertical-align:top;}
 .hidden {visibility:hidden}
 .inputfield
@@ -86,7 +100,7 @@ require JavaScript to process the mathematics on this page.<br />
 If your browser supports JavaScript, be sure it is enabled.</b>
 </div>
 </noscript>
-<div>
+<div id='content'>
 	<%
 		ProblemPuller pPuller = new ProblemPuller();
 		String id=request.getParameter("id");

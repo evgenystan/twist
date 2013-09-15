@@ -157,11 +157,10 @@ function sendToEvaluate(evt)
 	var sendPacket={id : evt.target.getAttribute("promptId")};
 	
 	var fieldList=div.getElementsByClassName("inputfield");
-	var i;
 	
-	for (i=0;i<fieldList.length;i++)
+	for (var i=0, m = fieldList.length;i<m;i++)
 	{
-		sendPacket['f'+(i+1)] = fieldList[i].textContent;
+		sendPacket[fieldList[i].getAttribute('fieldid')] = fieldList[i].textContent;
 	}
 	
 	sendPacket['total'] = i;
@@ -212,7 +211,7 @@ function removeInputField(evt)
 
 function showResults(data, textStatus, jqXHR, dataType)
 {
-	var id=/id=([0123456789]*)/.exec(this.data)[1];
+	var id=/id=([0123456789\.]*)/i.exec(this.data)[1];
 	var span = document.getElementById('resultsField'+id);
 	
 	span.innerHTML = data.replace(/"/g,"");
