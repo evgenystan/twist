@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testResponse correct = 'true/false yes/no 1/0' accepted = 'true/false yes/no 1/0'>
+	<comment>
+		Everything is wrong
+	</comment>
+	<comment fieldId = 'uSub'>
+		Incorrect syntax
+	</comment>
+</testResponse>

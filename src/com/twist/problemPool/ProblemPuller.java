@@ -1,5 +1,15 @@
 package com.twist.problemPool;
 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import com.twist.kernelUtilities.KernelTalker;
 
 public class ProblemPuller
@@ -95,14 +105,156 @@ public class ProblemPuller
 	{
 		KernelTalker kTalker = new KernelTalker();
 		ProblemDataPusher pPusher = new ProblemDataPusher();
-		String reply ="";
+		ProblemData pData;
+		ArrayList<String> promptStack = new ArrayList<String>(),tempList;
+		String 	reply ="", 
+				problemId,
+				xmlString, 
+				tempOptionString;
 		
+		promptStack.add(course+"."+id);
 		kTalker.executeCommand("SetDirectory[\"/Users/evgeny/Google Drive/Eclipse Workspace/twist/src/Mathematica\"]");
-		reply = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+course+"\", \""+id+"\"}, \"A\"]");
-		reply +=kTalker.evaluateToString("makeproblem[{\""+course+"\", \""+id+".1\"}, \"A\"]");
-		reply +=kTalker.evaluateToString("makeproblem[{\""+course+"\", \""+id+".2\"}, \"A\"]");
-		
+		while(!promptStack.isEmpty())
+		{
+			id = promptStack.remove(0);
+			problemId = id;
+			pData = pPusher.get(problemId);
+			if(pData != null)
+			{
+				tempOptionString = pData.getAllOptionsStrings();
+				if(tempOptionString!=null)
+				{
+					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+id+"\"}, \"A\"," + tempOptionString + "]");
+				}
+				else
+				{
+					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+id+"\"}, \"A\"]");
+				}
+			}
+			else
+			{
+				xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+id+"\"}, \"A\"]");
+			}
+			
+			pData = parseXMLResponse(problemId, xmlString, pData);
+			reply += pData.getPrompt();
+			pPusher.push(problemId, pData);
+			
+			tempList = pData.getSupplyPrompts();
+			if ((tempList != null)&&(tempList.size()>0))
+			{
+				promptStack.addAll(tempList);
+			}
+			
+			tempOptionString = pData.getAllOptionsStrings();
+			if((tempOptionString!=null)&&(tempOptionString.length()>0))
+			{
+				for(int i=0; i<tempList.size();i++)
+				{
+					pData = new ProblemData();
+					pData.addOptionsString(problemId, tempOptionString);
+					pPusher.push(tempList.get(i), pData);
+				}
+				
+				tempList = pData.getFetchPrompt();
+				for(int i=0; i<tempList.size();i++)
+				{
+					pData = new ProblemData();
+					pData.addOptionsString(problemId, tempOptionString);
+					pPusher.push(tempList.get(i), pData);
+				}
+			}
+		}
 		return reply;
+	}
+	
+	private ProblemData parseXMLResponse(String id, String str, ProblemData pData)
+	{
+		boolean inPrompt			=false;
+		boolean inNumberOfTries		=false;
+		boolean inNumberOfTriesLeft	=false;
+		boolean inOptionsString		=false;
+		boolean inEvalString		=false;
+		boolean inTestString		=false;
+		boolean inAnswerFields		=false;
+		boolean inAnswerComments	=false;
+		boolean inAnswerCorrect		=false;
+		boolean inFetchPrompt		=false;
+		boolean inSupplyPrompts		=false;
+		boolean inPromptFetched		=false;
+		boolean inFetchOnlyIfRight	=false;
+		boolean inReFetchIfUpdate	=false;
+		boolean inDependencies		=false;
+		
+		boolean pushList			=false;
+		
+		if (pData == null) {pData = new ProblemData();}
+		try
+		{
+			XMLInputFactory xif = XMLInputFactory.newInstance();
+			xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
+			xif.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+
+			StringReader sr = new StringReader(str);
+			XMLStreamReader xmlr = xif.createXMLStreamReader(sr);
+			int event = xmlr.getEventType();
+			
+			while (xmlr.hasNext())
+			{
+				switch(event)
+				{
+					case XMLStreamConstants.START_ELEMENT :
+						//Strings
+						if	   (xmlr.getLocalName().equals("prompt")) {inPrompt = true;}
+						else if(xmlr.getLocalName().equals("numberOfTries")) {inNumberOfTries = true;}
+						else if(xmlr.getLocalName().equals("evalString")) {inEvalString = true;}
+						else if(xmlr.getLocalName().equals("testString")) {inTestString = true;}
+						//Lists
+						else if(xmlr.getLocalName().equals("optionsString")) {inOptionsString = true;}
+						else if(xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = true; pData.resetFetchPrompt();}
+						else if(xmlr.getLocalName().equals("supplyPrompts")) {inSupplyPrompts = true; pData.resetSupplyPrompts();}
+						else if(xmlr.getLocalName().equals("dependencies")) {inDependencies = true; pData.resetDependencies();}
+						else if(xmlr.getLocalName().equals("id")) {pushList = true;}
+						//Boolean
+						else if(xmlr.getLocalName().equals("fetchOnlyIfRight")) {inFetchOnlyIfRight = true;}
+						else if(xmlr.getLocalName().equals("reFetchIfUpdate")) {inReFetchIfUpdate = true;}
+					break;
+					case XMLStreamConstants.CHARACTERS:
+						if(pushList)
+						{
+							if		(inFetchPrompt) 	{pData.addFetchPrompt(xmlr.getText());}
+							else if	(inSupplyPrompts) 	{pData.addSupplyPrompts(xmlr.getText());}
+							else if	(inDependencies) 	{pData.addDependency(xmlr.getText());}
+							
+							pushList = false;
+						}
+						//Technically, optionsString is a map list, but we only support one string per problem generator. Other strings may be inserted by other problems.
+						else if (inOptionsString) 	{inOptionsString = false;	pData.addOptionsString(id, xmlr.getText());}
+						else if (inPrompt) 			{inPrompt = false;			pData.setPrompt(xmlr.getText());}
+						else if (inNumberOfTries) 	{inNumberOfTries = false;	pData.setNumberOfTries(Integer.parseInt(xmlr.getText()));}
+						else if (inTestString)		{inTestString = false;		pData.setTestString(xmlr.getText());}
+						else if (inFetchOnlyIfRight){inFetchOnlyIfRight = false;pData.setFetchOnlyIfRight(Boolean.parseBoolean(xmlr.getText()));}
+						else if (inReFetchIfUpdate)	{inReFetchIfUpdate = false;	pData.setReFetchIfUpdate(Boolean.parseBoolean(xmlr.getText()));}
+					break;
+					case XMLStreamConstants.END_ELEMENT:
+						if	   (xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = false;}
+						else if(xmlr.getLocalName().equals("supplyPrompts")) {inSupplyPrompts = false;}
+						else if(xmlr.getLocalName().equals("dependencies")) {inDependencies = false;}
+					break;
+				}
+				event = xmlr.next();
+			}
+		
+		}
+		catch (FactoryConfigurationError e)
+		{
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) 
+		{
+			e.printStackTrace();
+		}
+		return pData;
 	}
 	
 	public String getProblemQuestionsAsString(int id)

@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<problemData>
+	<prompt>&lt;div&gt;&lt;h2&gt;Integration by subsitution&lt;/h2&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;Consider the integral &lt;script type=&apos;math/tex&apos; mode = &apos;display&apos;&gt;\int 6 e^{\frac{3 x}{2}+e^{3 x/2}} \, dx&lt;/script&gt;&lt;/p&gt;&lt;/div&gt;
+	</prompt>
+	<optionsString>{uu -&gt; Exp, ff -&gt; 6*E^(E^((3*x)/2) + (3*x)/2), FF -&gt; Exp}</optionsString>
+	<testString>Block[{uSub},uSub = StringReplace[&quot;uSub&quot;,{##}];Catch[If[Not[SyntaxQ[uSub]],Throw[&quot;Syntax Error&quot;],Throw[&quot;&amp;#10003;&quot;]];]]&amp;@@</testString>
+	<reFetchIfUpdate />
+	<fetchOnlyIfRight />
+	<supplyPrompts>
+		<id>21.1</id>
+		<id>21.2</id>
+	</supplyPrompts>
+	<fetchPrompt>
+		<id>21.3</id>
+		<id>21.4</id>
+	</fetchPrompt>
+	<dependencies>
+		<id>21</id>
+	</dependencies>
+</problemData>
