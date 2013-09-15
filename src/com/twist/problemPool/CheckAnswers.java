@@ -102,6 +102,8 @@ public class CheckAnswers extends HttpServlet {
 		String id=request.getParameter("id");
 		KernelTalker kTalker = new KernelTalker();
 		
+		// TODO Check if submission is possible. If submission is happened when numberOfTriesLeft is zero log the event
+		
 		if (id == null)
 		{
 		}

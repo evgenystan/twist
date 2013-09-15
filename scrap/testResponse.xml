@@ -6,4 +6,8 @@
 	<comment fieldId = 'uSub'>
 		Incorrect syntax
 	</comment>
+	<enablePrompt>
+		<id>1206.21.1</id>
+		<id>1206.21.2</id>
+	</enablePrompt>
 </testResponse>
