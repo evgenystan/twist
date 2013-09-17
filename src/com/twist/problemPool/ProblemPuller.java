@@ -187,6 +187,7 @@ public class ProblemPuller
 		boolean inDependencies		=false;
 		
 		boolean pushList			=false;
+		boolean enabled				=true;
 		
 		if (pData == null) {pData = new ProblemData();}
 		try
@@ -198,6 +199,8 @@ public class ProblemPuller
 			StringReader sr = new StringReader(str);
 			XMLStreamReader xmlr = xif.createXMLStreamReader(sr);
 			int event = xmlr.getEventType();
+			String	enabledAttr;
+			PromptToPull ptp;
 			
 			while (xmlr.hasNext())
 			{
@@ -214,7 +217,15 @@ public class ProblemPuller
 						else if(xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = true; pData.resetFetchPrompt();}
 						else if(xmlr.getLocalName().equals("supplyPrompts")) {inSupplyPrompts = true; pData.resetSupplyPrompts();}
 						else if(xmlr.getLocalName().equals("dependencies")) {inDependencies = true; pData.resetDependencies();}
-						else if(xmlr.getLocalName().equals("id")) {pushList = true;}
+						else if(xmlr.getLocalName().equals("id")) 
+						{
+							pushList = true;
+							if(inFetchPrompt||inSupplyPrompts)
+							{
+								enabledAttr = xmlr.getAttributeValue(null, "enabled");
+								if(enabledAttr !=null) {enabled = Boolean.parseBoolean(enabledAttr);}
+							}
+						}
 						//Boolean
 						else if(xmlr.getLocalName().equals("fetchOnlyIfRight")) {inFetchOnlyIfRight = true;}
 						else if(xmlr.getLocalName().equals("reFetchIfUpdate")) {inReFetchIfUpdate = true;}
@@ -222,11 +233,23 @@ public class ProblemPuller
 					case XMLStreamConstants.CHARACTERS:
 						if(pushList)
 						{
-							if		(inFetchPrompt) 	{pData.addFetchPrompt(xmlr.getText());}
-							else if	(inSupplyPrompts) 	{pData.addSupplyPrompts(xmlr.getText());}
-							else if	(inDependencies) 	{pData.addDependency(xmlr.getText());}
+							if	(inFetchPrompt) 	
+							{
+								ptp = new PromptToPull(xmlr.getText(),enabled);
+								pData.addFetchPrompt(ptp);
+							}
+							else if	(inSupplyPrompts) 	
+							{
+								ptp = new PromptToPull(xmlr.getText(),enabled);
+								pData.addSupplyPrompts(ptp);
+							}
+							else if	(inDependencies) 	
+							{
+								pData.addDependency(xmlr.getText());
+							}
 							
 							pushList = false;
+							enabled = true;
 						}
 						//Technically, optionsString is a map list, but we only support one string per problem generator. Other strings may be inserted by other problems.
 						else if (inOptionsString) 	{inOptionsString = false;	pData.addOptionsString(id, xmlr.getText());}
@@ -244,7 +267,7 @@ public class ProblemPuller
 				}
 				event = xmlr.next();
 			}
-		
+			xmlr.close();
 		}
 		catch (FactoryConfigurationError e)
 		{

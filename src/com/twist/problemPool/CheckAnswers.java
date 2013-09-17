@@ -2,6 +2,8 @@ package com.twist.problemPool;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -10,6 +12,13 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import com.twist.kernelUtilities.KernelTalker;
 
@@ -26,6 +35,113 @@ public class CheckAnswers extends HttpServlet {
     public CheckAnswers() {
         super();
         // TODO Auto-generated constructor stub
+    }
+    
+    private String parseXMLTestResponse(String id, String str,ProblemData pData)
+    {
+    	String outgoingXML;
+		boolean inPrompt			=false;
+		boolean inNumberOfTries		=false;
+		boolean inNumberOfTriesLeft	=false;
+		boolean inOptionsString		=false;
+		boolean inEvalString		=false;
+		boolean inTestString		=false;
+		boolean inAnswerFields		=false;
+		boolean inAnswerComments	=false;
+		boolean inAnswerCorrect		=false;
+		boolean inFetchPrompt		=false;
+		boolean inSupplyPrompts		=false;
+		boolean inPromptFetched		=false;
+		boolean inFetchOnlyIfRight	=false;
+		boolean inReFetchIfUpdate	=false;
+		boolean inDependencies		=false;
+		
+		boolean pushList			=false;
+		
+		if (pData == null) {return "<?xml version='1.0'?><checkResponse><error>Internal Error: null pointer is supplied to parseXMLTestResponse</error></checkResponse>";}
+		try
+		{
+			XMLOutputFactory xof =  XMLOutputFactory.newInstance();
+			XMLInputFactory xif = XMLInputFactory.newInstance();
+			xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
+			xif.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+
+			StringReader sr = new StringReader(str);
+			XMLStreamReader xmlr = xif.createXMLStreamReader(sr);
+
+			StringWriter stringBuffer=new StringWriter();
+			XMLStreamWriter xtw = xof.createXMLStreamWriter(stringBuffer);
+
+			xtw.writeStartDocument("utf-8","1.0");
+//			xtw.writeDTD("<!DOCTYPE TestResponse>");
+			xtw.writeStartElement("checkResponse");
+			xtw.writeAttribute("promptId", id);
+
+			int event = xmlr.getEventType();
+			
+			while (xmlr.hasNext())
+			{
+				switch(event)
+				{
+					case XMLStreamConstants.START_ELEMENT :
+						//Strings
+						if	   (xmlr.getLocalName().equals("prompt")) {inPrompt = true;}
+						else if(xmlr.getLocalName().equals("numberOfTries")) {inNumberOfTries = true;}
+						else if(xmlr.getLocalName().equals("evalString")) {inEvalString = true;}
+						else if(xmlr.getLocalName().equals("testString")) {inTestString = true;}
+						//Lists
+						else if(xmlr.getLocalName().equals("optionsString")) {inOptionsString = true;}
+						else if(xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = true; pData.resetFetchPrompt();}
+						else if(xmlr.getLocalName().equals("supplyPrompts")) {inSupplyPrompts = true; pData.resetSupplyPrompts();}
+						else if(xmlr.getLocalName().equals("dependencies")) {inDependencies = true; pData.resetDependencies();}
+						else if(xmlr.getLocalName().equals("id")) {pushList = true;}
+						//Boolean
+						else if(xmlr.getLocalName().equals("fetchOnlyIfRight")) {inFetchOnlyIfRight = true;}
+						else if(xmlr.getLocalName().equals("reFetchIfUpdate")) {inReFetchIfUpdate = true;}
+					break;
+					case XMLStreamConstants.CHARACTERS:
+						if(pushList)
+						{
+							if		(inFetchPrompt) 	{pData.addFetchPrompt(xmlr.getText());}
+							else if	(inSupplyPrompts) 	{pData.addSupplyPrompts(xmlr.getText());}
+							else if	(inDependencies) 	{pData.addDependency(xmlr.getText());}
+							
+							pushList = false;
+						}
+						//Technically, optionsString is a map list, but we only support one string per problem generator. Other strings may be inserted by other problems.
+						else if (inOptionsString) 	{inOptionsString = false;	pData.addOptionsString(id, xmlr.getText());}
+						else if (inPrompt) 			{inPrompt = false;			pData.setPrompt(xmlr.getText());}
+						else if (inNumberOfTries) 	{inNumberOfTries = false;	pData.setNumberOfTries(Integer.parseInt(xmlr.getText()));}
+						else if (inTestString)		{inTestString = false;		pData.setTestString(xmlr.getText());}
+						else if (inFetchOnlyIfRight){inFetchOnlyIfRight = false;pData.setFetchOnlyIfRight(Boolean.parseBoolean(xmlr.getText()));}
+						else if (inReFetchIfUpdate)	{inReFetchIfUpdate = false;	pData.setReFetchIfUpdate(Boolean.parseBoolean(xmlr.getText()));}
+					break;
+					case XMLStreamConstants.END_ELEMENT:
+						if	   (xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = false;}
+						else if(xmlr.getLocalName().equals("supplyPrompts")) {inSupplyPrompts = false;}
+						else if(xmlr.getLocalName().equals("dependencies")) {inDependencies = false;}
+					break;
+				}
+				event = xmlr.next();
+			}
+		
+			xtw.writeEndElement();
+			xtw.writeEndDocument();
+			xtw.flush();
+			outgoingXML = stringBuffer.toString();
+			xtw.close();
+		}
+		catch (FactoryConfigurationError e)
+		{
+			outgoingXML = "<?xml version='1.0'?><checkResponse><error>Can't write an XML output:" + e.getMessage() + "</error></checkResponse>";
+			e.printStackTrace();
+		}
+		catch (XMLStreamException e) 
+		{
+			outgoingXML = "<?xml version='1.0'?><checkResponse><error>Can't write an XML output:" + e.getMessage() + "</error></checkResponse>";
+			e.printStackTrace();
+		}
+		return outgoingXML;
     }
     
     private String getDependencies(String id,KernelTalker kTalker)
@@ -139,62 +255,74 @@ public class CheckAnswers extends HttpServlet {
 			else
 			{
 				Map<String,String[]> pars = request.getParameterMap();
-				
 				if(pData != null)
 				{
-					String test = pData.getTestString();
-					String key, args = "",fieldKey,fieldValue;
-					String[] value;
-					
-					int argcount = 0;
-					
-					for (Map.Entry<String, String[]> entry : pars.entrySet()) 
-					{
-					    key = entry.getKey();
-					    if((key.equals("total"))||(key.equals("id")))
-					    {
-					    	continue;
-					    }
-						if(argcount>0) args +=", ";
-						argcount++;
-					    value = entry.getValue();
-					    args += "\"" + key + "\" -> \"" + value[0] + "\"";
-					    pData.addAnswerField(key,value[0]);
-					}
-					
-					if(!pData.getDependencies().isEmpty())
-					{
-						ArrayList<String> stack = new ArrayList<String>();
-						ProblemData depData;
-						String depId;
-						
-						stack.addAll(pData.getDependencies());
-						
-						while(!stack.isEmpty())
-						{
-							depId = stack.remove(0);
-							depData = pPusher.get(depId);
+					response.setContentType("text/xml");
+					int	tryCounter = pData.getNumberOfTriesLeft();
 							
-							for (Map.Entry<String, String> entry : depData.getAnswerFields().entrySet()) 
-							{
-								if(argcount>0) args +=", ";
-								argcount++;
-							    fieldKey = entry.getKey();
-							    fieldValue = entry.getValue();
-							    args += "\"" + fieldKey + "\" -> \"" + fieldValue + "\"";
-							}
-							if(!depData.getDependencies().isEmpty()) {stack.addAll(depData.getDependencies());}
-						}
+					if(tryCounter == 0)
+					{
+						
 					}
-					
-					args = "{" + args + "}";
-					
-					PrintWriter out = response.getWriter();
-					
-					out.print(kTalker.evaluateToString(test + args));
-//					out.print("<p>" + kTalker.evaluateToString(test+args) + "</p><p>"+ test + args + "</p>");
-					out.close();
-					
+					else
+					{
+						XMLInputFactory xif = XMLInputFactory.newInstance();
+						xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
+						xif.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+
+						String test = pData.getTestString();
+						String key, args = "",fieldKey,fieldValue;
+						String[] value;
+						
+						int argcount = 0;
+						
+						for (Map.Entry<String, String[]> entry : pars.entrySet()) 
+						{
+						    key = entry.getKey();
+						    if((key.equals("total"))||(key.equals("id")))
+						    {
+						    	continue;
+						    }
+							if(argcount>0) args +=", ";
+							argcount++;
+						    value = entry.getValue();
+						    args += "\"" + key + "\" -> \"" + value[0] + "\"";
+						    pData.addAnswerField(key,value[0]);
+						}
+						
+						if(!pData.getDependencies().isEmpty())
+						{
+							ArrayList<String> stack = new ArrayList<String>();
+							ProblemData depData;
+							String depId;
+							
+							stack.addAll(pData.getDependencies());
+							
+							while(!stack.isEmpty())
+							{
+								depId = stack.remove(0);
+								depData = pPusher.get(depId);
+								
+								for (Map.Entry<String, String> entry : depData.getAnswerFields().entrySet()) 
+								{
+									if(argcount>0) args +=", ";
+									argcount++;
+								    fieldKey = entry.getKey();
+								    fieldValue = entry.getValue();
+								    args += "\"" + fieldKey + "\" -> \"" + fieldValue + "\"";
+								}
+								if(!depData.getDependencies().isEmpty()) {stack.addAll(depData.getDependencies());}
+							}
+						}
+						
+						args = "{" + args + "}";
+						
+						PrintWriter out = response.getWriter();
+						
+						out.print(parseXMLTestResponse(id,kTalker.evaluateToString(test + args),pData));
+	//					out.print("<p>" + kTalker.evaluateToString(test+args) + "</p><p>"+ test + args + "</p>");
+						out.close();
+					}
 				}
 			}
 		}
@@ -214,8 +342,6 @@ public class CheckAnswers extends HttpServlet {
 
 		if(pData != null)
 		{
-			response.setContentType("text/xml");
-			XMLOutputFactory xof =  XMLOutputFactory.newInstance();
 			if(pData.numberOfTries>0)
 			{
 				if(pData.numberOfTriesLeft>0)

@@ -73,22 +73,33 @@ htmlLatexDisplay=StringJoin["<script type='math/tex; mode=display'>",#,"</script
 
 (*Wrap the text in appropriate HTML tags to be displayed as a problem prompt*)
 Options[htmlPrompt]={promptId->""};
+SetOptions[htmlPrompt,promptId->""];
 
-htmlPrompt [title_String,body_String,opts___]:=StringJoin["<div><h2>"<>title<>"</h2></div><div promptId='"<>ReplaceAll[promptId,{opts}]<>"'><p>"<>body<>"</p></div>"];
-htmlPrompt [body_String,opts___]:=StringJoin["<div promptId='"<>ReplaceAll[promptId,{opts}]<>"'><p>"<>body<>"</p></div>"];
+htmlPrompt [title_String,body_String,OptionsPattern[]]:=StringJoin["<div><h2>"<>title<>"</h2></div><div promptId='"<>OptionValue[promptId]<>"'><p>"<>body<>"</p></div>"];
+htmlPrompt [body_String,OptionsPattern[]]:=StringJoin["<div promptId='"<>OptionValue[promptId]<>"'><p>"<>body<>"</p></div>"];
 
 (*Generate an input field*)
-htmlInputField = Function[fieldId,"<span class='inputfield' style='font-size: 100%; font-family: STIXGeneral-Regular; ' contenteditable='true' fieldId = '"<>fieldId<>"'></span>"];
+htmlInputField [fieldId_,OptionsPattern[]]:="<span class='inputfield' style='font-size: 100%; font-family: STIXGeneral-Regular; ' contenteditable='true' fieldId = '"<>fieldId<>"'></span>"
+(*Set default options for htmlInputField*)
+Options[htmlInputField] = {Enabled->True};
+SetOptions[htmlInputField,Enabled->True];
+
 
 (*Put all input fields together and supply them with a 'Submit' button*)
-htmlInputFieldBuilder = Function[{ problemId,prompt, fields},
-StringJoin["<div promptId = '",problemId,"' class='inputbox'>",prompt,"&nbsp;",fields<>"&nbsp;<input promptId = '",problemId,"' class='evalButton' type='button' value='Submit' />&nbsp;<span id='resultsField",problemId,"'></span></div>"]
-];
+htmlInputFieldBuilder [ problemId_,prompt_, fields_,OptionsPattern[]]:=
+StringJoin["<div promptId = '",problemId,"' class='inputbox'>",prompt,"&nbsp;",fields<>"&nbsp;<input promptId = '",problemId,"' class='evalButton' type='button' value='Submit' enabled ='",If[OptionValue[Enabled],"true","false"],"' />&nbsp;<span id='resultsField",problemId,"'></span></div>"]
+(*Set default options for htmlInputFieldBuilder*)
+Options[htmlInputFieldBuilder] = {Enabled->True};
+SetOptions[htmlInputFieldBuilder,Enabled->True];
 (*end of HTML utilities*)
 
 
 (*Transform a Mathematica expression into a LaTeX string. A few helpful substitutions are performed for a better output*)
 tFq=Block[{dummy},StringReplace[ToString[#/.dummy'[_]->1,TeXForm],{"=="->"\[LongEqual]","\[Equal]"->"\[LongEqual]","capitalC"->"C","zzone"->"1","dummy"->"","zdummy"->"","log"->"ln"}]]&;
+
+(*Set default options for makeproblem*)
+Options[makeproblem] = {Enabled->True};
+SetOptions[makeproblem,Enabled->True];
 
 
 probleminfo[{"1206.21"}]={"A u-substitution problem"};
@@ -106,14 +117,14 @@ u=RandomChoice[{Cos,Sin,Exp,(#^2)&,(#^3)&,Sqrt[#]&}];
 f=D[a F[u[b x]],x];
 prompt = htmlPrompt["Integration by subsitution","Consider the integral "<>htmlLatexDisplay[tFq[Defer[Integrate[#,x]]]&[f]]];
 optionsString =ToString[ {uu->u,ff->f,FF->F,aa->a,bb->b},InputForm];
-supplyPrompts = {"1206.21.1","1206.21.2"};
+supplyPrompts = {{"1206.21.1",Enabled->True},{"1206.21.2",Enabled->False}};
 
 (*Make an XML with special characters encoded as ENTITY_REFERENCE.*)
 xmlResponse = XMLObject["Document"][{XMLObject["Declaration"]["Version"->"1.0","Encoding"->"UTF-8"]},
 XMLElement["problemData",{},{
 XMLElement["prompt",{},{prompt}],
 XMLElement["optionsString",{},{optionsString}],
-XMLElement["supplyPrompts",{},Map[XMLElement["id",{},{#}]&,supplyPrompts]]
+XMLElement["supplyPrompts",{},Map[XMLElement["id",{"enabled"->ToString[ReplaceAll[Enabled,#[[2]]]]},{#[[1]]}]&,supplyPrompts,{1}]]
 }]
 ,{}];
 Return[ExportString[xmlResponse,"XML","Annotations" ->{"DocumentHeader","XMLDeclaration"}]];
@@ -121,17 +132,17 @@ Return[ExportString[xmlResponse,"XML","Annotations" ->{"DocumentHeader","XMLDecl
 ];
 
 
-makeproblem[{"1206.21.1"},str_,opts___]:=
+makeproblem[{"1206.21.1"},str_,opts__]:=
 Module[
 {xmlResponse,
 prompt = Null,numberOfTries = 0,optionsString =  Null, evalString = Null, testString=Null,
 fetchPrompt=Null,supplyPrompts=Null,fetchOnlyIfRight = True,reFetchIfUpdate = True,dependencies=Null,
- a,b,u,uprime,f,F,test},
-Block[{x,uu,ff,FF},
+ a,b,u,uprime,f,F,test,on},
+Block[{x,uu,ff,FF,Enabled,promptId},
 {u,f,F}=ReplaceAll[{uu,ff,FF},{opts}];
 prompt =StringJoin[
 htmlPrompt[ "Suggest a u-substitution that will simplify the integral.",promptId->"1206.21.1"],
-htmlInputFieldBuilder["1206.21.1","<span>u(x) = </span>",htmlInputField["uSub"]]
+htmlInputFieldBuilder["1206.21.1","<span>u(x) = </span>",htmlInputField["uSub"],Sequence[FilterRules[{opts},{Enabled}]]]
 ];
 test := Module[{uSub},uSub = StringReplace["uSub",{##}];
 Catch[If[Not[SyntaxQ[uSub]],Throw[makeXMLDocument[{{"testResponse",{"accepted","false"}},{"comment","Syntax Error"},{{"comment",{"fieldId","uSub"}},"Syntax error after \""<>StringTake[uSub,Min[SyntaxLength[uSub],StringLength[uSub]]]<>"\""}}]],
@@ -146,7 +157,7 @@ Throw[makeXMLDocument[{{"testResponse",{"accepted","false"},{"promptId","1206.21
 If[Not[NumericQ[Simplify[(uSub)/.x->1]]],
 Throw[makeXMLDocument[{{"testResponse",{"accepted","false"},{"promptId","1206.21.1"}},{"comment","Substitution must be a function of x only."},{{"comment",{"fieldId","uSub"}},"Check if there are variables other than x."}}]]
 ,
-Throw[makeXMLDocument[{{"testResponse",{"accepted","true"},{"promptId","1206.21.1"}},{{"comment",{"fieldId","uSub"}},"Accepted"}}]]
+Throw[makeXMLDocument[{{"testResponse",{"accepted","true"},{"promptId","1206.21.1"}},{{"comment",{"fieldId","uSub"}},"Accepted"},{"enablePrompt",{"id","1206.21.2"}}}]]
 ]
 ];
 ]
@@ -171,7 +182,7 @@ Module[
 prompt = Null,numberOfTries = 0,optionsString =  Null, evalString = Null, testString=Null,
 fetchPrompt=Null,supplyPrompts=Null,fetchOnlyIfRight = True,reFetchIfUpdate = True,dependencies=Null,
  a,b,u,uprime,f,F,test},
-Block[{uu,ff,FF},
+Block[{uu,ff,FF,Enabled,promptId},
 f=ReplaceAll[ff,{opts}];
 prompt =StringJoin[
 htmlPrompt["Apply your proposed substitution to the integral above.",promptId->"1206.21.2"],
@@ -181,7 +192,7 @@ htmlInputFieldBuilder["1206.21.2","",
 <span class='mrow'>"<>htmlInputField["integrand"]<>"</span>
 <span class='mspace' style='height: 0em; vertical-align: 0em; width: 0.188em; display: inline-block; overflow: hidden; '></span>
 <span class='mi' style='font-family: STIXGeneral-Italic; '>d</span>
-<span class='mrow'>"<>htmlInputField["variable"]<>"</span></span>"]
+<span class='mrow'>"<>htmlInputField["variable"]<>"</span></span>",Sequence[FilterRules[{opts},{Enabled}]]]
 ];
 test =ReplaceAll[ Module[{uSub,var,int,ok=True,comment="",commentvar="",commentint=""},
 Catch[

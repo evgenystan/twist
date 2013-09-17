@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[     94848,       2067]
-NotebookOptionsPosition[     93117,       2005]
-NotebookOutlinePosition[     93491,       2021]
-CellTagsIndexPosition[     93448,       2018]
+NotebookDataLength[    105590,       2297]
+NotebookOptionsPosition[    103388,       2220]
+NotebookOutlinePosition[    103762,       2236]
+CellTagsIndexPosition[    103719,       2233]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -204,43 +204,60 @@ Cell[BoxData[
      RowBox[{"Options", "[", "htmlPrompt", "]"}], "=", 
      RowBox[{"{", 
       RowBox[{"promptId", "\[Rule]", "\"\<\>\""}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{"htmlPrompt", ",", 
+      RowBox[{"promptId", "\[Rule]", "\"\<\>\""}]}], "]"}], ";"}], 
    "\[IndentingNewLine]", "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{
      RowBox[{"htmlPrompt", " ", "[", 
-      RowBox[{"title_String", ",", "body_String", ",", "opts___"}], "]"}], ":=", 
+      RowBox[{"title_String", ",", "body_String", ",", 
+       RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", 
      RowBox[{"StringJoin", "[", 
       RowBox[{
       "\"\<<div><h2>\>\"", "<>", "title", "<>", 
        "\"\<</h2></div><div promptId='\>\"", "<>", 
-       RowBox[{"ReplaceAll", "[", 
-        RowBox[{"promptId", ",", 
-         RowBox[{"{", "opts", "}"}]}], "]"}], "<>", "\"\<'><p>\>\"", "<>", 
-       "body", "<>", "\"\<</p></div>\>\""}], "]"}]}], ";"}], 
+       RowBox[{"OptionValue", "[", "promptId", "]"}], "<>", "\"\<'><p>\>\"", "<>",
+        "body", "<>", "\"\<</p></div>\>\""}], "]"}]}], ";"}], 
    "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{
      RowBox[{"htmlPrompt", " ", "[", 
-      RowBox[{"body_String", ",", "opts___"}], "]"}], ":=", 
+      RowBox[{"body_String", ",", 
+       RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", 
      RowBox[{"StringJoin", "[", 
       RowBox[{"\"\<<div promptId='\>\"", "<>", 
-       RowBox[{"ReplaceAll", "[", 
-        RowBox[{"promptId", ",", 
-         RowBox[{"{", "opts", "}"}]}], "]"}], "<>", "\"\<'><p>\>\"", "<>", 
-       "body", "<>", "\"\<</p></div>\>\""}], "]"}]}], ";"}], 
+       RowBox[{"OptionValue", "[", "promptId", "]"}], "<>", "\"\<'><p>\>\"", "<>",
+        "body", "<>", "\"\<</p></div>\>\""}], "]"}]}], ";"}], 
    "\[IndentingNewLine]", "\[IndentingNewLine]", 
    RowBox[{"(*", 
     RowBox[{"Generate", " ", "an", " ", "input", " ", "field"}], "*)"}], 
    "\[IndentingNewLine]", 
    RowBox[{
-    RowBox[{"htmlInputField", " ", "=", " ", 
-     RowBox[{"Function", "[", 
-      RowBox[{"fieldId", ",", 
-       RowBox[{
-       "\"\<<span class='inputfield' style='font-size: 100%; font-family: \
+    RowBox[{"htmlInputField", " ", "[", 
+     RowBox[{"fieldId_", ",", 
+      RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", 
+    RowBox[{
+    "\"\<<span class='inputfield' style='font-size: 100%; font-family: \
 STIXGeneral-Regular; ' contenteditable='true' fieldId = '\>\"", "<>", 
-        "fieldId", "<>", "\"\<'></span>\>\""}]}], "]"}]}], ";"}], 
-   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+     "fieldId", "<>", "\"\<'></span>\>\""}]}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Set", " ", "default", " ", "options", " ", "for", " ", 
+     "htmlInputField"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Options", "[", "htmlInputField", "]"}], " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"Enabled", "\[Rule]", "True"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{"htmlInputField", ",", 
+      RowBox[{"Enabled", "\[Rule]", "True"}]}], "]"}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
    RowBox[{"(*", 
     RowBox[{
     "Put", " ", "all", " ", "input", " ", "fields", " ", "together", " ", 
@@ -249,22 +266,40 @@ STIXGeneral-Regular; ' contenteditable='true' fieldId = '\>\"", "<>",
      RowBox[{"Submit", "'"}], " ", "button"}], "*)"}], "\[IndentingNewLine]", 
    
    RowBox[{
-    RowBox[{"htmlInputFieldBuilder", " ", "=", " ", 
-     RowBox[{"Function", "[", 
-      RowBox[{
-       RowBox[{"{", " ", 
-        RowBox[{"problemId", ",", "prompt", ",", " ", "fields"}], "}"}], ",", 
-       "\[IndentingNewLine]", 
-       RowBox[{"StringJoin", "[", 
-        RowBox[{
-        "\"\<<div promptId = '\>\"", ",", "problemId", ",", 
-         "\"\<' class='inputbox'>\>\"", ",", "prompt", ",", "\"\<&nbsp;\>\"", 
-         ",", 
-         RowBox[{"fields", "<>", "\"\<&nbsp;<input promptId = '\>\""}], ",", 
-         "problemId", ",", 
-         "\"\<' class='evalButton' type='button' value='Submit' />&nbsp;<span \
-id='resultsField\>\"", ",", "problemId", ",", "\"\<'></span></div>\>\""}], 
-        "]"}]}], "\[IndentingNewLine]", "]"}]}], ";"}], "\[IndentingNewLine]", 
+    RowBox[{"htmlInputFieldBuilder", " ", "[", " ", 
+     RowBox[{"problemId_", ",", "prompt_", ",", " ", "fields_", ",", 
+      RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", 
+    "\[IndentingNewLine]", 
+    RowBox[{"StringJoin", "[", 
+     RowBox[{
+     "\"\<<div promptId = '\>\"", ",", "problemId", ",", 
+      "\"\<' class='inputbox'>\>\"", ",", "prompt", ",", "\"\<&nbsp;\>\"", 
+      ",", 
+      RowBox[{"fields", "<>", "\"\<&nbsp;<input promptId = '\>\""}], ",", 
+      "problemId", ",", 
+      "\"\<' class='evalButton' type='button' value='Submit' enabled ='\>\"", 
+      ",", 
+      RowBox[{"If", "[", 
+       RowBox[{
+        RowBox[{"OptionValue", "[", "Enabled", "]"}], ",", "\"\<true\>\"", 
+        ",", "\"\<false\>\""}], "]"}], ",", 
+      "\"\<' />&nbsp;<span id='resultsField\>\"", ",", "problemId", ",", 
+      "\"\<'></span></div>\>\""}], "]"}]}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Set", " ", "default", " ", "options", " ", "for", " ", 
+     "htmlInputFieldBuilder"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Options", "[", "htmlInputFieldBuilder", "]"}], " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"Enabled", "\[Rule]", "True"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{"htmlInputFieldBuilder", ",", 
+      RowBox[{"Enabled", "\[Rule]", "True"}]}], "]"}], ";"}], 
+   "\[IndentingNewLine]", 
    RowBox[{"(*", 
     RowBox[{"end", " ", "of", " ", "HTML", " ", "utilities"}], "*)"}], 
    "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
@@ -300,7 +335,22 @@ id='resultsField\>\"", ",", "problemId", ",", "\"\<'></span></div>\>\""}],
             RowBox[{"\"\<dummy\>\"", "\[Rule]", "\"\<\>\""}], ",", 
             RowBox[{"\"\<zdummy\>\"", "\[Rule]", "\"\<\>\""}], ",", 
             RowBox[{"\"\<log\>\"", "\[Rule]", "\"\<ln\>\""}]}], "}"}]}], 
-         "]"}]}], "]"}], "&"}]}], ";"}]}]}]], "Input",
+         "]"}]}], "]"}], "&"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "Set", " ", "default", " ", "options", " ", "for", " ", "makeproblem"}], 
+    "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Options", "[", "makeproblem", "]"}], " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"Enabled", "\[Rule]", "True"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"SetOptions", "[", 
+     RowBox[{"makeproblem", ",", 
+      RowBox[{"Enabled", "\[Rule]", "True"}]}], "]"}], ";"}]}]}]], "Input",
  InitializationCell->True,
  CellChangeTimes->{{3.587504006599164*^9, 3.58750403524235*^9}, {
    3.5875041923929157`*^9, 3.587504204141069*^9}, {3.587504234726749*^9, 
@@ -328,7 +378,43 @@ id='resultsField\>\"", ",", "problemId", ",", "\"\<'></span></div>\>\""}],
    3.5881946057228947`*^9, 3.588194617227254*^9}, {3.588197783774083*^9, 
    3.58819789453181*^9}, {3.5881979268398657`*^9, 3.588197933043351*^9}, {
    3.58819797097473*^9, 3.588198001038787*^9}, {3.588198191717959*^9, 
-   3.5881982602921877`*^9}, {3.588198404576499*^9, 3.5881984266331453`*^9}}],
+   3.5881982602921877`*^9}, {3.588198404576499*^9, 3.5881984266331453`*^9}, {
+   3.588372784169241*^9, 3.588372850550866*^9}, {3.588372953725377*^9, 
+   3.588372974165496*^9}, {3.5883733629439983`*^9, 3.5883734493076563`*^9}, {
+   3.5883735233531027`*^9, 3.588373550488874*^9}, {3.5883736311635237`*^9, 
+   3.5883736488849773`*^9}, {3.588373789002253*^9, 3.588373863940596*^9}, 
+   3.5883739532201757`*^9, {3.588373992258939*^9, 3.5883739994104023`*^9}, {
+   3.5883741625763197`*^9, 3.588374165615643*^9}, {3.588375246163883*^9, 
+   3.588375298301339*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ClearAll", "[", 
+  RowBox[{"htmlInputField", ",", "htmlInputFieldBuilder"}], "]"}]], "Input",
+ CellChangeTimes->{{3.58837357648768*^9, 3.5883735886809263`*^9}, {
+  3.588373659942383*^9, 3.58837367395179*^9}, {3.588373866237577*^9, 
+  3.588373866460692*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"htmlInputFieldBuilder", "[", 
+  RowBox[{"\"\<abc\>\"", ",", "\"\<A=\>\"", ",", 
+   RowBox[{"htmlInputField", "[", 
+    RowBox[{"\"\<abc\>\"", ",", 
+     RowBox[{"Enabled", "\[Rule]", "False"}]}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.588373611502162*^9, 3.588373614893087*^9}, 
+   3.5883736773358097`*^9, {3.5883738858943*^9, 3.58837392497845*^9}}],
+
+Cell[BoxData["\<\"<div promptId = 'abc' class='inputbox'>A=&nbsp;<span \
+class='inputfield' style='font-size: 100%; font-family: STIXGeneral-Regular; \
+' contenteditable='true' fieldId = 'abc'></span>&nbsp;<input promptId = 'abc' \
+class='evalButton' type='button' value='Submit' enabled ='true' />&nbsp;<span \
+id='resultsFieldabc'></span></div>\"\>"], "Output",
+ CellChangeTimes->{
+  3.588373617424543*^9, {3.5883736548265533`*^9, 3.588373682700183*^9}, 
+   3.5883739273584146`*^9, 3.58837400370054*^9, {3.588374174738286*^9, 
+   3.5883741884942923`*^9}}]
+}, Open  ]],
 
 Cell[BoxData[{
  RowBox[{
@@ -431,8 +517,14 @@ Cell[BoxData[{
           "]"}]}], ";", "\[IndentingNewLine]", 
         RowBox[{"supplyPrompts", " ", "=", " ", 
          RowBox[{"{", 
-          RowBox[{"\"\<1206.21.1\>\"", ",", "\"\<1206.21.2\>\""}], "}"}]}], 
-        ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+          RowBox[{
+           RowBox[{"{", 
+            RowBox[{"\"\<1206.21.1\>\"", ",", 
+             RowBox[{"Enabled", "->", "True"}]}], "}"}], ",", 
+           RowBox[{"{", 
+            RowBox[{"\"\<1206.21.2\>\"", ",", 
+             RowBox[{"Enabled", "->", "False"}]}], "}"}]}], "}"}]}], ";", 
+        "\[IndentingNewLine]", "\[IndentingNewLine]", 
         RowBox[{"(*", 
          RowBox[{
          "Make", " ", "an", " ", "XML", " ", "with", " ", "special", " ", 
@@ -473,10 +565,21 @@ Cell[BoxData[{
                    RowBox[{
                     RowBox[{"XMLElement", "[", 
                     RowBox[{"\"\<id\>\"", ",", 
-                    RowBox[{"{", "}"}], ",", 
-                    RowBox[{"{", "#", "}"}]}], "]"}], "&"}], ",", 
-                   "supplyPrompts"}], "]"}]}], "]"}]}], "\[IndentingNewLine]",
-               "}"}]}], "]"}], "\[IndentingNewLine]", ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<enabled\>\"", "\[Rule]", 
+                    RowBox[{"ToString", "[", 
+                    RowBox[{"ReplaceAll", "[", 
+                    RowBox[{"Enabled", ",", 
+                    RowBox[{"#", "[", 
+                    RowBox[{"[", "2", "]"}], "]"}]}], "]"}], "]"}]}], "}"}], 
+                    ",", 
+                    RowBox[{"{", 
+                    RowBox[{"#", "[", 
+                    RowBox[{"[", "1", "]"}], "]"}], "}"}]}], "]"}], "&"}], 
+                   ",", "supplyPrompts", ",", 
+                   RowBox[{"{", "1", "}"}]}], "]"}]}], "]"}]}], 
+              "\[IndentingNewLine]", "}"}]}], "]"}], "\[IndentingNewLine]", 
+           ",", 
            RowBox[{"{", "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
         RowBox[{"Return", "[", 
          RowBox[{"ExportString", "[", 
@@ -512,14 +615,16 @@ Cell[BoxData[{
    3.588116130113224*^9, 3.588116130735667*^9}, {3.5881162171869802`*^9, 
    3.588116296574521*^9}, {3.588117906714217*^9, 3.58811791686904*^9}, {
    3.588121538076194*^9, 3.5881215571395483`*^9}, {3.588194242599648*^9, 
-   3.5881942484895678`*^9}, {3.58819439531927*^9, 3.5881943978946667`*^9}}],
+   3.5881942484895678`*^9}, {3.58819439531927*^9, 3.5881943978946667`*^9}, {
+   3.588372364573288*^9, 3.588372511009377*^9}, 3.58837307018213*^9, {
+   3.588374730980227*^9, 3.5883747340427847`*^9}}],
 
 Cell[BoxData[
  RowBox[{
   RowBox[{
    RowBox[{"makeproblem", "[", 
     RowBox[{
-     RowBox[{"{", "\"\<1206.21.1\>\"", "}"}], ",", "str_", ",", "opts___"}], 
+     RowBox[{"{", "\"\<1206.21.1\>\"", "}"}], ",", "str_", ",", "opts__"}], 
     "]"}], ":=", "\[IndentingNewLine]", 
    RowBox[{"Module", "[", "\[IndentingNewLine]", 
     RowBox[{
@@ -536,13 +641,14 @@ Cell[BoxData[
        RowBox[{"reFetchIfUpdate", " ", "=", " ", "True"}], ",", 
        RowBox[{"dependencies", "=", "Null"}], ",", "\[IndentingNewLine]", " ",
         "a", ",", "b", ",", "u", ",", "uprime", ",", "f", ",", "F", ",", 
-       "test"}], "}"}], ",", "\[IndentingNewLine]", 
+       "test", ",", "on"}], "}"}], ",", "\[IndentingNewLine]", 
      RowBox[{
       RowBox[{"Block", "[", 
        RowBox[{
         RowBox[{"{", 
-         RowBox[{"x", ",", "uu", ",", "ff", ",", "FF"}], "}"}], ",", 
-        "\[IndentingNewLine]", 
+         RowBox[{
+         "x", ",", "uu", ",", "ff", ",", "FF", ",", "Enabled", ",", 
+          "promptId"}], "}"}], ",", "\[IndentingNewLine]", 
         RowBox[{
          RowBox[{
           RowBox[{"{", 
@@ -564,8 +670,13 @@ Cell[BoxData[
             RowBox[{"htmlInputFieldBuilder", "[", 
              RowBox[{
              "\"\<1206.21.1\>\"", ",", "\"\<<span>u(x) = </span>\>\"", ",", 
-              RowBox[{"htmlInputField", "[", "\"\<uSub\>\"", "]"}]}], "]"}]}],
-            "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
+              RowBox[{"htmlInputField", "[", "\"\<uSub\>\"", "]"}], ",", 
+              RowBox[{"Sequence", "[", 
+               RowBox[{"FilterRules", "[", 
+                RowBox[{
+                 RowBox[{"{", "opts", "}"}], ",", 
+                 RowBox[{"{", "Enabled", "}"}]}], "]"}], "]"}]}], "]"}]}], 
+           "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"test", " ", ":=", " ", 
           RowBox[{
            RowBox[{"Module", "[", 
@@ -732,9 +843,13 @@ Cell[BoxData[
                     RowBox[{"\"\<comment\>\"", ",", 
                     RowBox[{"{", 
                     RowBox[{"\"\<fieldId\>\"", ",", "\"\<uSub\>\""}], "}"}]}],
-                     "}"}], ",", "\"\<Accepted\>\""}], "}"}]}], "}"}], "]"}], 
-                    "]"}]}], "\[IndentingNewLine]", "]"}]}], 
-                    "\[IndentingNewLine]", "]"}], ";"}]}], 
+                     "}"}], ",", "\"\<Accepted\>\""}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<enablePrompt\>\"", ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<id\>\"", ",", "\"\<1206.21.2\>\""}], "}"}]}],
+                     "}"}]}], "}"}], "]"}], "]"}]}], "\[IndentingNewLine]", 
+                    "]"}]}], "\[IndentingNewLine]", "]"}], ";"}]}], 
                    "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", 
                  "]"}], ";"}], "]"}]}]}], "]"}], "&"}]}], ";", 
          "\[IndentingNewLine]", 
@@ -819,7 +934,14 @@ Cell[BoxData[
    3.58811827119354*^9}, {3.5881214039733133`*^9, 3.5881214107328*^9}, {
    3.588128811236292*^9, 3.58812885443412*^9}, 3.5881944027705793`*^9, {
    3.5881977315470963`*^9, 3.588197744999427*^9}, {3.5881983050411463`*^9, 
-   3.5881983172287617`*^9}}],
+   3.5881983172287617`*^9}, {3.588372655034588*^9, 3.588372672805987*^9}, 
+   3.588373073689019*^9, {3.588373121909355*^9, 3.5883731327921543`*^9}, {
+   3.58837370590488*^9, 3.588373763500239*^9}, {3.588374215779805*^9, 
+   3.588374227120906*^9}, {3.588374689098983*^9, 3.5883747168945513`*^9}, {
+   3.588374834710556*^9, 3.588374837231213*^9}, {3.588374925847157*^9, 
+   3.5883749275894117`*^9}, {3.588375009798625*^9, 3.5883750315172462`*^9}, {
+   3.588375067902649*^9, 3.588375097610818*^9}, {3.5883753115584087`*^9, 
+   3.58837531365337*^9}}],
 
 Cell[BoxData[
  RowBox[{
@@ -848,8 +970,9 @@ Cell[BoxData[
       RowBox[{"Block", "[", 
        RowBox[{
         RowBox[{"{", 
-         RowBox[{"uu", ",", "ff", ",", "FF"}], "}"}], ",", 
-        "\[IndentingNewLine]", 
+         RowBox[{
+         "uu", ",", "ff", ",", "FF", ",", "Enabled", ",", "promptId"}], "}"}],
+         ",", "\[IndentingNewLine]", 
         RowBox[{
          RowBox[{"f", "=", 
           RowBox[{"ReplaceAll", "[", 
@@ -877,7 +1000,12 @@ vertical-align: 0em; width: 0.188em; display: inline-block; overflow: hidden; \
 '></span>\n<span class='mi' style='font-family: STIXGeneral-Italic; \
 '>d</span>\n<span class='mrow'>\>\"", "<>", 
                RowBox[{"htmlInputField", "[", "\"\<variable\>\"", "]"}], 
-               "<>", "\"\<</span></span>\>\""}]}], "]"}]}], 
+               "<>", "\"\<</span></span>\>\""}], ",", 
+              RowBox[{"Sequence", "[", 
+               RowBox[{"FilterRules", "[", 
+                RowBox[{
+                 RowBox[{"{", "opts", "}"}], ",", 
+                 RowBox[{"{", "Enabled", "}"}]}], "]"}], "]"}]}], "]"}]}], 
            "\[IndentingNewLine]", "]"}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"test", " ", "=", 
           RowBox[{"ReplaceAll", "[", " ", 
@@ -1246,7 +1374,15 @@ integral.\>\""}], "}"}]}], "}"}], "]"}], "]"}]}], "\[IndentingNewLine]",
    3.5881846345897913`*^9}, 3.5881848165937233`*^9, {3.5881924562176743`*^9, 
    3.58819245745397*^9}, 3.5881944083749933`*^9, 3.588197391176859*^9, {
    3.5881976570871887`*^9, 3.5881977152463493`*^9}, {3.588198464532219*^9, 
-   3.58819847611757*^9}}],
+   3.58819847611757*^9}, 3.5883730781011963`*^9, {3.588374287849559*^9, 
+   3.5883742920024977`*^9}, 3.58837436836096*^9, {3.5883744345930033`*^9, 
+   3.588374437169422*^9}, {3.588374602820408*^9, 3.588374676274147*^9}, {
+   3.5883748086789227`*^9, 3.5883748113208447`*^9}, {3.588374843702879*^9, 
+   3.588374855884609*^9}, {3.58837492036905*^9, 3.588374922072474*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ClearAll", "[", "makeproblem", "]"}]], "Input",
+ CellChangeTimes->{{3.588374398245751*^9, 3.5883744064855127`*^9}}],
 
 Cell[CellGroupData[{
 
@@ -1261,12 +1397,15 @@ Cell[BoxData[
 Cell[BoxData["\<\"<?xml version='1.0' encoding='UTF-8'?>\\n<problemData>\\n \
 <prompt>&lt;div&gt;&lt;h2&gt;Integration by \
 subsitution&lt;/h2&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;Consider the integral \
-&lt;script type=&apos;math/tex; mode=display&apos;&gt;\\\\int 150 e^{25 x^2} \
-x \\\\, dx&lt;/script&gt;&lt;/p&gt;&lt;/div&gt;</prompt>\\n \
-<optionsString>{uu -&gt; (#1^2 &amp; ), ff -&gt; 150*E^(25*x^2)*x, FF -&gt; \
-Exp, aa -&gt; 3, bb -&gt; 5}</optionsString>\\n <supplyPrompts>\\n  \
-<id>1206.21.1</id>\\n  <id>1206.21.2</id>\\n \
-</supplyPrompts>\\n</problemData>\"\>"], "Output",
+&lt;script type=&apos;math/tex; mode=display&apos;&gt;\\\\int \
+\\\\frac{\\\\sqrt{\\\\frac{3}{2}} \\\\sec ^2\\\\left(\\\\sqrt{\\\\frac{3}{2}} \
+\\\\sqrt{x}\\\\right)}{4 \\\\sqrt{x}} \\\\, \
+dx&lt;/script&gt;&lt;/p&gt;&lt;/div&gt;</prompt>\\n <optionsString>{uu -&gt; \
+(Sqrt[#1] &amp; ), ff -&gt; (Sqrt[3/2]*Sec[Sqrt[3/2]*Sqrt[x]]^2)/(4*Sqrt[x]), \
+FF -&gt; Tan, aa -&gt; 1/2, bb -&gt; 3/2}</optionsString>\\n \
+<supplyPrompts>\\n  <id enabled='True'>1206.21.1</id>\\n  <id \
+enabled='False'>1206.21.2</id>\\n </supplyPrompts>\\n</problemData>\"\>"], \
+"Output",
  CellChangeTimes->{
   3.587510134748726*^9, 3.5875103752030687`*^9, 3.587510413541122*^9, 
    3.587510553114787*^9, 3.587510653053445*^9, 3.5875113458151493`*^9, 
@@ -1277,7 +1416,8 @@ Exp, aa -&gt; 3, bb -&gt; 5}</optionsString>\\n <supplyPrompts>\\n  \
    3.587776878410363*^9, 3.587776890230318*^9}, 3.5877811506712313`*^9, 
    3.587935469706339*^9, {3.587953425631102*^9, 3.587953446352065*^9}, {
    3.588116336238141*^9, 3.5881163394461393`*^9}, 3.588118084130349*^9, 
-   3.588194439398443*^9, 3.58819462884477*^9}]
+   3.588194439398443*^9, 3.58819462884477*^9, 3.5883724451505632`*^9, 
+   3.588372519579835*^9, 3.58837475789085*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1301,7 +1441,9 @@ Cell[BoxData[
    3.588034814523917*^9}, {3.588118103283276*^9, 3.588118103936418*^9}, {
    3.588118279189528*^9, 3.588118279709406*^9}, {3.588184135342216*^9, 
    3.588184135398491*^9}, 3.588194424430366*^9, {3.588198326417498*^9, 
-   3.588198326497264*^9}}],
+   3.588198326497264*^9}, {3.5883742514894857`*^9, 3.5883742564079113`*^9}, {
+   3.588374343279408*^9, 3.588374343359473*^9}, {3.5883749715299377`*^9, 
+   3.588374971800748*^9}, {3.588375109679747*^9, 3.5883751097845507`*^9}}],
 
 Cell[BoxData["\<\"<?xml version='1.0' encoding='UTF-8'?>\\n<problemData>\\n \
 <prompt>&lt;div promptId=&apos;1206.21.1&apos;&gt;&lt;p&gt;Suggest a \
@@ -1313,7 +1455,7 @@ style=&apos;font-size: 100%; font-family: STIXGeneral-Regular; &apos; \
 contenteditable=&apos;true&apos; fieldId = \
 &apos;uSub&apos;&gt;&lt;/span&gt;&amp;nbsp;&lt;input promptId = \
 &apos;1206.21.1&apos; class=&apos;evalButton&apos; type=&apos;button&apos; \
-value=&apos;Submit&apos; /&gt;&amp;nbsp;&lt;span \
+value=&apos;Submit&apos; enabled =&apos;true&apos; /&gt;&amp;nbsp;&lt;span \
 id=&apos;resultsField1206.21.1&apos;&gt;&lt;/span&gt;&lt;/div&gt;</prompt>\\n \
 <testString>Module[{uSub}, uSub = StringReplace[&quot;uSub&quot;, {##1}]; \
 Catch[If[ !SyntaxQ[uSub], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
@@ -1343,7 +1485,8 @@ only.&quot;}, {{&quot;comment&quot;, {&quot;fieldId&quot;, \
 x.&quot;}}]], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
 {&quot;accepted&quot;, &quot;true&quot;}, {&quot;promptId&quot;, \
 &quot;1206.21.1&quot;}}, {{&quot;comment&quot;, {&quot;fieldId&quot;, \
-&quot;uSub&quot;}}, &quot;Accepted&quot;}}]]]]; ]]; ]] &amp; \
+&quot;uSub&quot;}}, &quot;Accepted&quot;}, {&quot;enablePrompt&quot;, \
+{&quot;id&quot;, &quot;1206.21.2&quot;}}}]]]]; ]]; ]] &amp; \
 @@</testString>\\n</problemData>\"\>"], "Output",
  CellChangeTimes->{{3.587777595917695*^9, 3.587777623915387*^9}, 
    3.5877777166260147`*^9, 3.587777910227075*^9, {3.587777941939437*^9, 
@@ -1353,8 +1496,15 @@ x.&quot;}}]], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
    3.58811810528524*^9}, 3.588118281017789*^9, 3.588121422579083*^9, 
    3.5881288599850473`*^9, 3.588184139373067*^9, 3.5881841916856947`*^9, 
    3.588184316626524*^9, 3.588184526813685*^9, 3.588184641668997*^9, 
-   3.588185042706973*^9, 3.588198327640732*^9, 3.588198444390787*^9}]
+   3.588185042706973*^9, 3.588198327640732*^9, 3.588198444390787*^9, {
+   3.5883742381640797`*^9, 3.588374258000486*^9}, 3.5883743446886578`*^9, {
+   3.588374375390304*^9, 3.588374391650075*^9}, 3.5883744429490213`*^9, {
+   3.588374775162128*^9, 3.588374784457416*^9}, 3.588374879855274*^9, 
+   3.5883749373686857`*^9, 3.588374973929338*^9, 3.5883751115419903`*^9, 
+   3.58837532760914*^9}]
 }, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[{
  RowBox[{
@@ -1506,7 +1656,10 @@ Cell[BoxData[{
                     RowBox[{"{", 
                     RowBox[{"\"\<testResponse\>\"", ",", 
                     RowBox[{"{", 
-                    RowBox[{"\"\<accepted\>\"", ",", "\"\<true\>\""}], 
+                    RowBox[{"\"\<accepted\>\"", ",", "\"\<true\>\""}], "}"}], 
+                    ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<promptId\>\"", ",", "\"\<1206.21.1\>\""}], 
                     "}"}]}], "}"}], ",", 
                     RowBox[{"{", 
                     RowBox[{
@@ -1514,11 +1667,15 @@ Cell[BoxData[{
                     RowBox[{"\"\<comment\>\"", ",", 
                     RowBox[{"{", 
                     RowBox[{"\"\<fieldId\>\"", ",", "\"\<uSub\>\""}], "}"}]}],
-                     "}"}], ",", "\"\<Accepted\>\""}], "}"}]}], "}"}], "]"}], 
-                   "]"}]}], "\[IndentingNewLine]", "]"}]}], 
-               "\[IndentingNewLine]", "]"}], ";"}]}], "\[IndentingNewLine]", 
-            "]"}]}], "\[IndentingNewLine]", "]"}], ";"}], "]"}]}]}], "]"}], 
-    "&"}]}], ";"}], "\[IndentingNewLine]", 
+                     "}"}], ",", "\"\<Accepted\>\""}], "}"}], ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<enablePrompt\>\"", ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<id\>\"", ",", "\"\<1206.21.2\>\""}], "}"}]}],
+                     "}"}]}], "}"}], "]"}], "]"}]}], "\[IndentingNewLine]", 
+                 "]"}]}], "\[IndentingNewLine]", "]"}], ";"}]}], 
+            "\[IndentingNewLine]", "]"}]}], "\[IndentingNewLine]", "]"}], 
+         ";"}], "]"}]}]}], "]"}], "&"}]}], ";"}], "\[IndentingNewLine]", 
  RowBox[{"ToString", "[", 
   RowBox[{"test", ",", "InputForm"}], "]"}], "\[IndentingNewLine]", 
  RowBox[{"test", "@@", 
@@ -1538,7 +1695,40 @@ Cell[BoxData[{
    3.58812793553878*^9, 3.588127939008943*^9}, {3.5881281833290777`*^9, 
    3.588128198567008*^9}, {3.588128500429965*^9, 3.588128501268221*^9}, {
    3.58812864843379*^9, 3.5881287116459913`*^9}, {3.588128758917913*^9, 
-   3.588128789634309*^9}}],
+   3.588128789634309*^9}, 3.588375124779336*^9}],
+
+Cell[BoxData["\<\"Module[{uSub}, uSub = StringReplace[\\\"uSub\\\", {##1}]; \
+Catch[If[ !SyntaxQ[uSub], Throw[makeXMLDocument[{{\\\"testResponse\\\", \
+{\\\"accepted\\\", \\\"false\\\"}}, {\\\"comment\\\", \\\"Syntax Error\\\"}, \
+{{\\\"comment\\\", {\\\"fieldId\\\", \\\"uSub\\\"}}, StringJoin[\\\"Syntax \
+error after \\\\\\\"\\\", StringTake[uSub, Min[SyntaxLength[uSub], \
+StringLength[uSub]]], \\\"\\\\\\\"\\\"]}}]], Block[{x}, uSub = \
+ToExpression[StringReplace[StringReplace[uSub, \
+WordBoundary~~\\\"e\\\"~~WordBoundary -> \\\"E\\\"], \
+{WordBoundary~~\\\"x\\\"~~Whitespace~~\\\"(\\\" -> \\\"x*(\\\", \
+WordBoundary~~\\\"x(\\\" -> \\\"x*(\\\", \
+WordBoundary~~\\\"E\\\"~~Whitespace~~\\\"(\\\" -> \\\"E*(\\\", WordBoundary~~\
+\\\"E(\\\" -> \\\"E*(\\\"}], TraditionalForm]; If[NumberQ[Simplify[uSub/x]], \
+Throw[makeXMLDocument[{{\\\"testResponse\\\", {\\\"accepted\\\", \
+\\\"false\\\"}}, {\\\"comment\\\", \\\"Substitution must not be a multiple of \
+x\\\"}, {{\\\"comment\\\", {\\\"fieldId\\\", \\\"uSub\\\"}}, \\\"Substitution \
+must not be a multiple of x\\\"}}]], If[ !NumericQ[Simplify[uSub /. x -> 1]], \
+Throw[makeXMLDocument[{{\\\"testResponse\\\", {\\\"accepted\\\", \
+\\\"false\\\"}}, {\\\"comment\\\", \\\"Substitution must be a function of x \
+only.\\\"}, {{\\\"comment\\\", {\\\"fieldId\\\", \\\"uSub\\\"}}, \\\"Check if \
+there are variables other than x.\\\"}}]], \
+Throw[makeXMLDocument[{{\\\"testResponse\\\", {\\\"accepted\\\", \
+\\\"true\\\"}, {\\\"promptId\\\", \\\"1206.21.1\\\"}}, {{\\\"comment\\\", {\\\
+\"fieldId\\\", \\\"uSub\\\"}}, \\\"Accepted\\\"}, {\\\"enablePrompt\\\", \
+{\\\"id\\\", \\\"1206.21.2\\\"}}}]]]]; ]]; ]] & \"\>"], "Output",
+ CellChangeTimes->{3.5883751305830603`*^9}],
+
+Cell[BoxData["\<\"<?xml version='1.0' encoding='UTF-8'?>\\n<testResponse \
+accepted='true' promptId='1206.21.1'>\\n<comment \
+fieldId='uSub'>Accepted</comment>\\n<enablePrompt>\\n<id>1206.21.2</id></\
+enablePrompt></testResponse>\"\>"], "Output",
+ CellChangeTimes->{3.5883751305843763`*^9}]
+}, Open  ]],
 
 Cell[CellGroupData[{
 
@@ -2001,11 +2191,36 @@ text</item>\\n<item>text</item></item>\\n<item><item/>\\n</item></root>\"\>"],\
  "Output",
  CellChangeTimes->{3.588115965291593*^9, 3.588116066769808*^9, 
   3.588116139785451*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"makeproblem", "[", 
+   RowBox[{
+    RowBox[{"{", "\"\<abc\>\"", "}"}], ",", 
+    RowBox[{"OptionsPattern", "[", "]"}]}], "]"}], ":=", 
+  RowBox[{"Block", "[", 
+   RowBox[{
+    RowBox[{"{", "Enabled", "}"}], ",", 
+    RowBox[{"OptionValue", "[", "Enabled", "]"}]}], "]"}]}]], "Input",
+ CellChangeTimes->{{3.58837285763072*^9, 3.588372905940325*^9}, {
+  3.588373013478855*^9, 3.5883730434274063`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"makeproblem", "[", 
+  RowBox[{"{", "\"\<abc\>\"", "}"}], "]"}]], "Input",
+ CellChangeTimes->{{3.588372910266164*^9, 3.588372919652504*^9}}],
+
+Cell[BoxData["True"], "Output",
+ CellChangeTimes->{3.588372920608059*^9, 3.588372980949458*^9, 
+  3.5883730471338778`*^9}]
 }, Open  ]]
 },
 AutoGeneratedPackage->Automatic,
-WindowSize->{1285, 975},
-WindowMargins->{{-8, Automatic}, {35, Automatic}},
+WindowSize->{1787, 941},
+WindowMargins->{{-8, Automatic}, {69, Automatic}},
 FrontEndVersion->"7.0 for Mac OS X x86 (32-bit) (February 18, 2009)",
 StyleDefinitions->"Default.nb"
 ]
@@ -2020,54 +2235,69 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[545, 20, 13727, 310, 1141, "Input",
+Cell[545, 20, 16066, 367, 1246, "Input",
  InitializationCell->True],
-Cell[14275, 332, 8740, 182, 433, "Input",
+Cell[16614, 389, 281, 5, 27, "Input"],
+Cell[CellGroupData[{
+Cell[16920, 398, 382, 7, 27, "Input"],
+Cell[17305, 407, 557, 8, 43, "Output"]
+}, Open  ]],
+Cell[17877, 418, 9560, 201, 433, "Input",
  InitializationCell->True],
-Cell[23018, 516, 15133, 305, 703, "Input",
+Cell[27440, 621, 16154, 322, 703, "Input",
  InitializationCell->True],
-Cell[38154, 823, 21324, 425, 1333, "Input",
+Cell[43597, 945, 21941, 435, 1288, "Input",
  InitializationCell->True],
+Cell[65541, 1382, 139, 2, 27, "Input"],
 Cell[CellGroupData[{
-Cell[59503, 1252, 229, 6, 27, "Input"],
-Cell[59735, 1260, 1301, 19, 163, "Output"]
+Cell[65705, 1388, 229, 6, 27, "Input"],
+Cell[65937, 1396, 1548, 23, 163, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[61073, 1284, 875, 19, 27, "Input"],
-Cell[61951, 1305, 3386, 50, 328, "Output"]
-}, Open  ]],
-Cell[65352, 1358, 8485, 182, 403, "Input"],
-Cell[CellGroupData[{
-Cell[73862, 1544, 13031, 287, 883, "Input"],
-Cell[86896, 1833, 241, 3, 58, "Output"]
+Cell[67522, 1424, 1075, 21, 27, "Input"],
+Cell[68600, 1447, 3804, 56, 253, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[87174, 1841, 121, 2, 27, "Input"],
-Cell[87298, 1845, 188, 3, 27, "Output"]
+Cell[72441, 1508, 8877, 189, 343, "Input"],
+Cell[81321, 1699, 1720, 24, 103, "Output"],
+Cell[83044, 1725, 290, 4, 88, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[87523, 1853, 573, 12, 70, "Input"],
-Cell[88099, 1867, 129, 2, 39, "Output"]
+Cell[83371, 1734, 13031, 287, 823, "Input"],
+Cell[96405, 2023, 241, 3, 58, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[88265, 1874, 263, 5, 27, "Input"],
-Cell[88531, 1881, 136, 2, 43, "Output"]
+Cell[96683, 2031, 121, 2, 27, "Input"],
+Cell[96807, 2035, 188, 3, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[88704, 1888, 330, 9, 27, "Input"],
-Cell[89037, 1899, 99, 1, 27, "Output"]
+Cell[97032, 2043, 573, 12, 70, "Input"],
+Cell[97608, 2057, 129, 2, 39, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[89173, 1905, 202, 4, 27, "Input"],
-Cell[89378, 1911, 87, 1, 27, "Output"]
+Cell[97774, 2064, 263, 5, 27, "Input"],
+Cell[98040, 2071, 136, 2, 43, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[89502, 1917, 1371, 31, 238, "Input"],
-Cell[90876, 1950, 507, 7, 133, "Output"]
+Cell[98213, 2078, 330, 9, 27, "Input"],
+Cell[98546, 2089, 99, 1, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[91420, 1962, 1343, 33, 253, "Input"],
-Cell[92766, 1997, 335, 5, 133, "Output"]
+Cell[98682, 2095, 202, 4, 27, "Input"],
+Cell[98887, 2101, 87, 1, 27, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[99011, 2107, 1371, 31, 238, "Input"],
+Cell[100385, 2140, 507, 7, 133, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[100929, 2152, 1343, 33, 253, "Input"],
+Cell[102275, 2187, 335, 5, 133, "Output"]
+}, Open  ]],
+Cell[102625, 2195, 434, 11, 27, "Input"],
+Cell[CellGroupData[{
+Cell[103084, 2210, 163, 3, 27, "Input"],
+Cell[103250, 2215, 122, 2, 27, "Output"]
 }, Open  ]]
 }
 ]
