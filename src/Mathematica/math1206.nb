@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    105590,       2297]
-NotebookOptionsPosition[    103388,       2220]
-NotebookOutlinePosition[    103762,       2236]
-CellTagsIndexPosition[    103719,       2233]
+NotebookDataLength[    108124,       2336]
+NotebookOptionsPosition[    105875,       2258]
+NotebookOutlinePosition[    106249,       2274]
+CellTagsIndexPosition[    106206,       2271]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -277,13 +277,12 @@ STIXGeneral-Regular; ' contenteditable='true' fieldId = '\>\"", "<>",
       ",", 
       RowBox[{"fields", "<>", "\"\<&nbsp;<input promptId = '\>\""}], ",", 
       "problemId", ",", 
-      "\"\<' class='evalButton' type='button' value='Submit' enabled ='\>\"", 
-      ",", 
+      "\"\<' class='evalButton' type='button' value='Submit'\>\"", ",", 
       RowBox[{"If", "[", 
        RowBox[{
-        RowBox[{"OptionValue", "[", "Enabled", "]"}], ",", "\"\<true\>\"", 
-        ",", "\"\<false\>\""}], "]"}], ",", 
-      "\"\<' />&nbsp;<span id='resultsField\>\"", ",", "problemId", ",", 
+        RowBox[{"OptionValue", "[", "Enabled", "]"}], ",", "\"\<\>\"", ",", 
+        "\"\< disabled='true'\>\""}], "]"}], ",", 
+      "\"\< />&nbsp;<span id='resultsField\>\"", ",", "problemId", ",", 
       "\"\<'></span></div>\>\""}], "]"}]}], "\[IndentingNewLine]", 
    RowBox[{"(*", 
     RowBox[{
@@ -385,7 +384,15 @@ STIXGeneral-Regular; ' contenteditable='true' fieldId = '\>\"", "<>",
    3.5883736488849773`*^9}, {3.588373789002253*^9, 3.588373863940596*^9}, 
    3.5883739532201757`*^9, {3.588373992258939*^9, 3.5883739994104023`*^9}, {
    3.5883741625763197`*^9, 3.588374165615643*^9}, {3.588375246163883*^9, 
-   3.588375298301339*^9}}],
+   3.588375298301339*^9}, {3.588433321311782*^9, 3.5884333674990387`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"ClearAll", "[", "\[IndentingNewLine]", 
+  RowBox[{
+  "htmlPrompt", ",", "\[IndentingNewLine]", "htmlInputField", ",", 
+   "\[IndentingNewLine]", "htmlInputFieldBuilder"}], "\[IndentingNewLine]", 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.588433069254335*^9, 3.588433123889195*^9}}],
 
 Cell[BoxData[
  RowBox[{"ClearAll", "[", 
@@ -1396,16 +1403,14 @@ Cell[BoxData[
 
 Cell[BoxData["\<\"<?xml version='1.0' encoding='UTF-8'?>\\n<problemData>\\n \
 <prompt>&lt;div&gt;&lt;h2&gt;Integration by \
-subsitution&lt;/h2&gt;&lt;/div&gt;&lt;div&gt;&lt;p&gt;Consider the integral \
-&lt;script type=&apos;math/tex; mode=display&apos;&gt;\\\\int \
-\\\\frac{\\\\sqrt{\\\\frac{3}{2}} \\\\sec ^2\\\\left(\\\\sqrt{\\\\frac{3}{2}} \
-\\\\sqrt{x}\\\\right)}{4 \\\\sqrt{x}} \\\\, \
+subsitution&lt;/h2&gt;&lt;/div&gt;&lt;div \
+promptId=&apos;&apos;&gt;&lt;p&gt;Consider the integral &lt;script \
+type=&apos;math/tex; mode=display&apos;&gt;\\\\int \\\\frac{10}{3 x} \\\\, \
 dx&lt;/script&gt;&lt;/p&gt;&lt;/div&gt;</prompt>\\n <optionsString>{uu -&gt; \
-(Sqrt[#1] &amp; ), ff -&gt; (Sqrt[3/2]*Sec[Sqrt[3/2]*Sqrt[x]]^2)/(4*Sqrt[x]), \
-FF -&gt; Tan, aa -&gt; 1/2, bb -&gt; 3/2}</optionsString>\\n \
-<supplyPrompts>\\n  <id enabled='True'>1206.21.1</id>\\n  <id \
-enabled='False'>1206.21.2</id>\\n </supplyPrompts>\\n</problemData>\"\>"], \
-"Output",
+(#1^2 &amp; ), ff -&gt; 10/(3*x), FF -&gt; Log, aa -&gt; 5/3, bb -&gt; \
+5/3}</optionsString>\\n <supplyPrompts>\\n  <id enabled='True'>1206.21.1</id>\
+\\n  <id enabled='False'>1206.21.2</id>\\n \
+</supplyPrompts>\\n</problemData>\"\>"], "Output",
  CellChangeTimes->{
   3.587510134748726*^9, 3.5875103752030687`*^9, 3.587510413541122*^9, 
    3.587510553114787*^9, 3.587510653053445*^9, 3.5875113458151493`*^9, 
@@ -1417,7 +1422,7 @@ enabled='False'>1206.21.2</id>\\n </supplyPrompts>\\n</problemData>\"\>"], \
    3.587935469706339*^9, {3.587953425631102*^9, 3.587953446352065*^9}, {
    3.588116336238141*^9, 3.5881163394461393`*^9}, 3.588118084130349*^9, 
    3.588194439398443*^9, 3.58819462884477*^9, 3.5883724451505632`*^9, 
-   3.588372519579835*^9, 3.58837475789085*^9}]
+   3.588372519579835*^9, 3.58837475789085*^9, 3.588433161246108*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -1425,7 +1430,7 @@ Cell[CellGroupData[{
 Cell[BoxData[
  RowBox[{"makeproblem", "[", 
   RowBox[{
-   RowBox[{"{", "\"\<1206.21.1\>\"", "}"}], ",", "\"\<A\>\"", ",", 
+   RowBox[{"{", "\"\<1206.21.2\>\"", "}"}], ",", "\"\<A\>\"", ",", 
    RowBox[{"uu", " ", "->", " ", "Cos"}], ",", " ", 
    RowBox[{"ff", " ", "->", " ", 
     RowBox[{
@@ -1435,7 +1440,8 @@ Cell[BoxData[
        RowBox[{"3", "*", "x"}], "]"}]}], "*", 
      RowBox[{"Sin", "[", 
       RowBox[{"3", "*", "x"}], "]"}]}]}], ",", " ", 
-   RowBox[{"FF", " ", "->", " ", "Exp"}]}], "]"}]], "Input",
+   RowBox[{"FF", " ", "->", " ", "Exp"}], ",", 
+   RowBox[{"Enabled", "\[Rule]", "False"}]}], "]"}]], "Input",
  CellChangeTimes->{{3.587776933739737*^9, 3.587776947080504*^9}, {
    3.587778229735289*^9, 3.587778230286811*^9}, {3.588034814405052*^9, 
    3.588034814523917*^9}, {3.588118103283276*^9, 3.588118103936418*^9}, {
@@ -1443,51 +1449,83 @@ Cell[BoxData[
    3.588184135398491*^9}, 3.588194424430366*^9, {3.588198326417498*^9, 
    3.588198326497264*^9}, {3.5883742514894857`*^9, 3.5883742564079113`*^9}, {
    3.588374343279408*^9, 3.588374343359473*^9}, {3.5883749715299377`*^9, 
-   3.588374971800748*^9}, {3.588375109679747*^9, 3.5883751097845507`*^9}}],
+   3.588374971800748*^9}, {3.588375109679747*^9, 3.5883751097845507`*^9}, {
+   3.588433171384797*^9, 3.588433178563348*^9}}],
 
 Cell[BoxData["\<\"<?xml version='1.0' encoding='UTF-8'?>\\n<problemData>\\n \
-<prompt>&lt;div promptId=&apos;1206.21.1&apos;&gt;&lt;p&gt;Suggest a \
-u-substitution that will simplify the integral.&lt;/p&gt;&lt;/div&gt;&lt;div \
-promptId = &apos;1206.21.1&apos; \
-class=&apos;inputbox&apos;&gt;&lt;span&gt;u(x) = \
-&lt;/span&gt;&amp;nbsp;&lt;span class=&apos;inputfield&apos; \
+<prompt>&lt;div promptId=&apos;1206.21.2&apos;&gt;&lt;p&gt;Apply your \
+proposed substitution to the integral above.&lt;/p&gt;&lt;/div&gt;&lt;div \
+promptId = &apos;1206.21.2&apos; \
+class=&apos;inputbox&apos;&gt;&amp;nbsp;&lt;span style=&apos;display: \
+inline-block; position: relative; font-size: 104%;&apos;&gt;\\n&lt;span \
+class=&apos;mo&apos; style=&apos;font-family: STIXIntegralsD; vertical-align: \
+-0.615em; &apos;&gt;&amp;#x222B;&lt;/span&gt;\\n&lt;span \
+class=&apos;mrow&apos;&gt;&lt;span class=&apos;inputfield&apos; \
 style=&apos;font-size: 100%; font-family: STIXGeneral-Regular; &apos; \
 contenteditable=&apos;true&apos; fieldId = \
-&apos;uSub&apos;&gt;&lt;/span&gt;&amp;nbsp;&lt;input promptId = \
-&apos;1206.21.1&apos; class=&apos;evalButton&apos; type=&apos;button&apos; \
-value=&apos;Submit&apos; enabled =&apos;true&apos; /&gt;&amp;nbsp;&lt;span \
-id=&apos;resultsField1206.21.1&apos;&gt;&lt;/span&gt;&lt;/div&gt;</prompt>\\n \
-<testString>Module[{uSub}, uSub = StringReplace[&quot;uSub&quot;, {##1}]; \
-Catch[If[ !SyntaxQ[uSub], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
-{&quot;accepted&quot;, &quot;false&quot;}}, {&quot;comment&quot;, \
-&quot;Syntax Error&quot;}, {{&quot;comment&quot;, {&quot;fieldId&quot;, \
-&quot;uSub&quot;}}, StringJoin[&quot;Syntax error after \\\\&quot;&quot;, \
-StringTake[uSub, Min[SyntaxLength[uSub], StringLength[uSub]]], \
-&quot;\\\\&quot;&quot;]}}]], Block[{x}, uSub = \
+&apos;integrand&apos;&gt;&lt;/span&gt;&lt;/span&gt;\\n&lt;span \
+class=&apos;mspace&apos; style=&apos;height: 0em; vertical-align: 0em; width: \
+0.188em; display: inline-block; overflow: hidden; \
+&apos;&gt;&lt;/span&gt;\\n&lt;span class=&apos;mi&apos; \
+style=&apos;font-family: STIXGeneral-Italic; \
+&apos;&gt;d&lt;/span&gt;\\n&lt;span class=&apos;mrow&apos;&gt;&lt;span \
+class=&apos;inputfield&apos; style=&apos;font-size: 100%; font-family: \
+STIXGeneral-Regular; &apos; contenteditable=&apos;true&apos; fieldId = \
+&apos;variable&apos;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&amp;nbsp;&lt;\
+input promptId = &apos;1206.21.2&apos; class=&apos;evalButton&apos; \
+type=&apos;button&apos; value=&apos;Submit&apos; enabled =&apos;false&apos; \
+/&gt;&amp;nbsp;&lt;span \
+id=&apos;resultsField1206.21.2&apos;&gt;&lt;/span&gt;&lt;/div&gt;</prompt>\\n \
+<testString>Module[{uSub, var, int, ok = True, comment = &quot;&quot;, \
+commentvar = &quot;&quot;, commentint = &quot;&quot;}, Catch[{uSub, var, int} \
+= StringReplace[{&quot;uSub&quot;, &quot;variable&quot;, \
+&quot;integrand&quot;}, {##1}]; var = StringReplace[var, Whitespace -&gt; \
+&quot;&quot;]; If[ !LetterQ[var], ok = False; comment = &quot;The \
+differential of the integral must be a single variable. &quot;; commentvar = \
+&quot;This does not seem to be a valid variable name.&quot;; , If[ \
+!SyntaxQ[var], ok = False; comment = StringJoin[comment, &quot;Your input \
+cannot be interpreted as an integral. &quot;]; commentvar = &quot;This does \
+not seem to be a valid variable name.&quot;; ]; ]; If[ !SyntaxQ[int], ok = \
+False; comment = StringJoin[comment, &quot;Your input cannot be interpreted \
+as an integral&quot;]; commentint = StringJoin[&quot;Your integrand has a \
+syntax error at or after **&quot;, StringTake[int, Min[SyntaxLength[int], \
+StringLength[int]]], &quot;**&quot;]; ]; If[ok, Block[{x, uVar}, int = \
+ToExpression[StringReplace[StringReplace[StringReplace[int, \
+{WordBoundary~~&quot;e&quot;~~WordBoundary -&gt; &quot;E&quot;, \
+start:Except[LetterCharacter]~~&quot;e&quot;~~end:Except[LetterCharacter] \
+:&gt; StringJoin[start, &quot;E&quot;, end], \
+WordBoundary~~&quot;e&quot;~~end:Except[LetterCharacter] :&gt; \
+StringJoin[&quot;E&quot;, end], \
+start:Except[LetterCharacter]~~&quot;e&quot;~~WordBoundary :&gt; \
+StringJoin[start, &quot;E&quot;]}], \
+{WordBoundary~~var~~Whitespace~~&quot;(&quot; -&gt; StringJoin[var, \
+&quot;*(&quot;], WordBoundary~~var~~&quot;(&quot; -&gt; StringJoin[var, \
+&quot;*(&quot;], WordBoundary~~&quot;E&quot;~~Whitespace~~&quot;(&quot; -&gt; \
+&quot;E*(&quot;, WordBoundary~~&quot;E(&quot; -&gt; &quot;E*(&quot;}], var \
+-&gt; &quot;uVar&quot;], TraditionalForm]; uSub = \
 ToExpression[StringReplace[StringReplace[uSub, \
 WordBoundary~~&quot;e&quot;~~WordBoundary -&gt; &quot;E&quot;], \
 {WordBoundary~~&quot;x&quot;~~Whitespace~~&quot;(&quot; -&gt; \
 &quot;x*(&quot;, WordBoundary~~&quot;x(&quot; -&gt; &quot;x*(&quot;, \
 WordBoundary~~&quot;E&quot;~~Whitespace~~&quot;(&quot; -&gt; &quot;E*(&quot;, \
 WordBoundary~~&quot;E(&quot; -&gt; &quot;E*(&quot;}], TraditionalForm]; \
-If[NumberQ[Simplify[uSub/x]], \
-Throw[makeXMLDocument[{{&quot;testResponse&quot;, {&quot;accepted&quot;, \
-&quot;false&quot;}, {&quot;promptId&quot;, &quot;1206.21.1&quot;}}, \
-{&quot;comment&quot;, &quot;Substitution must not be a multiple of x&quot;}, \
-{{&quot;comment&quot;, {&quot;fieldId&quot;, &quot;uSub&quot;}}, \
-&quot;Substitution must not be a multiple of x&quot;}}]], If[ \
-!NumericQ[Simplify[uSub /. x -&gt; 1]], \
-Throw[makeXMLDocument[{{&quot;testResponse&quot;, {&quot;accepted&quot;, \
-&quot;false&quot;}, {&quot;promptId&quot;, &quot;1206.21.1&quot;}}, \
-{&quot;comment&quot;, &quot;Substitution must be a function of x \
-only.&quot;}, {{&quot;comment&quot;, {&quot;fieldId&quot;, \
-&quot;uSub&quot;}}, &quot;Check if there are variables other than \
-x.&quot;}}]], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
-{&quot;accepted&quot;, &quot;true&quot;}, {&quot;promptId&quot;, \
-&quot;1206.21.1&quot;}}, {{&quot;comment&quot;, {&quot;fieldId&quot;, \
-&quot;uSub&quot;}}, &quot;Accepted&quot;}, {&quot;enablePrompt&quot;, \
-{&quot;id&quot;, &quot;1206.21.2&quot;}}}]]]]; ]]; ]] &amp; \
-@@</testString>\\n</problemData>\"\>"], "Output",
+If[PossibleZeroQ[Simplify[-9*E^Cos[3*x]*Sin[3*x] - (int /. uVar -&gt; \
+uSub)*D[uSub, x]]], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
+{&quot;correct&quot;, &quot;true&quot;}, {&quot;promptId&quot;, \
+&quot;1206.21.2&quot;}}, {&quot;comment&quot;, &quot;Great!&quot;}}]], \
+Throw[makeXMLDocument[{{&quot;testResponse&quot;, {&quot;correct&quot;, \
+&quot;false&quot;}, {&quot;promptId&quot;, &quot;1206.21.2&quot;}}, \
+{&quot;comment&quot;, &quot;Your integral does not match the original \
+one.&quot;}, {{&quot;comment&quot;, {&quot;fieldId&quot;, \
+&quot;integrand&quot;}}, &quot;This does not evaluate to match the original \
+integral.&quot;}}]]]], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
+{&quot;correct&quot;, &quot;false&quot;}, {&quot;promptId&quot;, \
+&quot;1206.21.2&quot;}}, {&quot;comment&quot;, comment}, \
+{{&quot;comment&quot;, {&quot;fieldId&quot;, &quot;variable&quot;}}, \
+commentvar}, {{&quot;comment&quot;, {&quot;fieldId&quot;, \
+&quot;integrand&quot;}}, commentint}}]]]; ]] &amp; @@</testString>\\n \
+<dependencies>\\n  <id>1206.21.1</id>\\n \
+</dependencies>\\n</problemData>\"\>"], "Output",
  CellChangeTimes->{{3.587777595917695*^9, 3.587777623915387*^9}, 
    3.5877777166260147`*^9, 3.587777910227075*^9, {3.587777941939437*^9, 
    3.5877779683257837`*^9}, 3.587778231489534*^9, 3.587778623921139*^9, 
@@ -1501,7 +1539,7 @@ x.&quot;}}]], Throw[makeXMLDocument[{{&quot;testResponse&quot;, \
    3.588374375390304*^9, 3.588374391650075*^9}, 3.5883744429490213`*^9, {
    3.588374775162128*^9, 3.588374784457416*^9}, 3.588374879855274*^9, 
    3.5883749373686857`*^9, 3.588374973929338*^9, 3.5883751115419903`*^9, 
-   3.58837532760914*^9}]
+   3.58837532760914*^9, 3.588433183820785*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2235,69 +2273,70 @@ CellTagsIndex->{}
 *)
 (*NotebookFileOutline
 Notebook[{
-Cell[545, 20, 16066, 367, 1246, "Input",
+Cell[545, 20, 16102, 366, 1246, "Input",
  InitializationCell->True],
-Cell[16614, 389, 281, 5, 27, "Input"],
+Cell[16650, 388, 304, 6, 88, "Input"],
+Cell[16957, 396, 281, 5, 27, "Input"],
 Cell[CellGroupData[{
-Cell[16920, 398, 382, 7, 27, "Input"],
-Cell[17305, 407, 557, 8, 43, "Output"]
+Cell[17263, 405, 382, 7, 27, "Input"],
+Cell[17648, 414, 557, 8, 43, "Output"]
 }, Open  ]],
-Cell[17877, 418, 9560, 201, 433, "Input",
+Cell[18220, 425, 9560, 201, 433, "Input",
  InitializationCell->True],
-Cell[27440, 621, 16154, 322, 703, "Input",
+Cell[27783, 628, 16154, 322, 703, "Input",
  InitializationCell->True],
-Cell[43597, 945, 21941, 435, 1288, "Input",
+Cell[43940, 952, 21941, 435, 1288, "Input",
  InitializationCell->True],
-Cell[65541, 1382, 139, 2, 27, "Input"],
+Cell[65884, 1389, 139, 2, 27, "Input"],
 Cell[CellGroupData[{
-Cell[65705, 1388, 229, 6, 27, "Input"],
-Cell[65937, 1396, 1548, 23, 163, "Output"]
+Cell[66048, 1395, 229, 6, 27, "Input"],
+Cell[66280, 1403, 1446, 21, 163, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[67522, 1424, 1075, 21, 27, "Input"],
-Cell[68600, 1447, 3804, 56, 253, "Output"]
+Cell[67763, 1429, 1175, 23, 27, "Input"],
+Cell[68941, 1454, 5950, 87, 478, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[72441, 1508, 8877, 189, 343, "Input"],
-Cell[81321, 1699, 1720, 24, 103, "Output"],
-Cell[83044, 1725, 290, 4, 88, "Output"]
+Cell[74928, 1546, 8877, 189, 343, "Input"],
+Cell[83808, 1737, 1720, 24, 103, "Output"],
+Cell[85531, 1763, 290, 4, 88, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[83371, 1734, 13031, 287, 823, "Input"],
-Cell[96405, 2023, 241, 3, 58, "Output"]
+Cell[85858, 1772, 13031, 287, 823, "Input"],
+Cell[98892, 2061, 241, 3, 58, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[96683, 2031, 121, 2, 27, "Input"],
-Cell[96807, 2035, 188, 3, 27, "Output"]
+Cell[99170, 2069, 121, 2, 27, "Input"],
+Cell[99294, 2073, 188, 3, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[97032, 2043, 573, 12, 70, "Input"],
-Cell[97608, 2057, 129, 2, 39, "Output"]
+Cell[99519, 2081, 573, 12, 70, "Input"],
+Cell[100095, 2095, 129, 2, 39, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[97774, 2064, 263, 5, 27, "Input"],
-Cell[98040, 2071, 136, 2, 43, "Output"]
+Cell[100261, 2102, 263, 5, 27, "Input"],
+Cell[100527, 2109, 136, 2, 43, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[98213, 2078, 330, 9, 27, "Input"],
-Cell[98546, 2089, 99, 1, 27, "Output"]
+Cell[100700, 2116, 330, 9, 27, "Input"],
+Cell[101033, 2127, 99, 1, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[98682, 2095, 202, 4, 27, "Input"],
-Cell[98887, 2101, 87, 1, 27, "Output"]
+Cell[101169, 2133, 202, 4, 27, "Input"],
+Cell[101374, 2139, 87, 1, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[99011, 2107, 1371, 31, 238, "Input"],
-Cell[100385, 2140, 507, 7, 133, "Output"]
+Cell[101498, 2145, 1371, 31, 238, "Input"],
+Cell[102872, 2178, 507, 7, 133, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[100929, 2152, 1343, 33, 253, "Input"],
-Cell[102275, 2187, 335, 5, 133, "Output"]
+Cell[103416, 2190, 1343, 33, 253, "Input"],
+Cell[104762, 2225, 335, 5, 133, "Output"]
 }, Open  ]],
-Cell[102625, 2195, 434, 11, 27, "Input"],
+Cell[105112, 2233, 434, 11, 27, "Input"],
 Cell[CellGroupData[{
-Cell[103084, 2210, 163, 3, 27, "Input"],
-Cell[103250, 2215, 122, 2, 27, "Output"]
+Cell[105571, 2248, 163, 3, 27, "Input"],
+Cell[105737, 2253, 122, 2, 27, "Output"]
 }, Open  ]]
 }
 ]

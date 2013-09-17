@@ -106,37 +106,42 @@ public class ProblemPuller
 		KernelTalker kTalker = new KernelTalker();
 		ProblemDataPusher pPusher = new ProblemDataPusher();
 		ProblemData pData;
-		ArrayList<String> promptStack = new ArrayList<String>(),tempList;
+		PromptToPull ptp;
+		boolean enabled = true;
+		ArrayList<PromptToPull> promptStack = new ArrayList<PromptToPull>(),tempList;
 		String 	reply ="", 
 				problemId,
 				xmlString, 
 				tempOptionString;
 		
-		promptStack.add(course+"."+id);
-		kTalker.executeCommand("SetDirectory[\"/Users/evgeny/Google Drive/Eclipse Workspace/twist/src/Mathematica\"]");
+		ptp = new PromptToPull(course+"."+id);
+		promptStack.add(ptp);
+		kTalker.executeCommand("SetDirectory[\"/Users/\"<>$UserName<>\"/Google Drive/Eclipse Workspace/twist/src/Mathematica\"]");
 		while(!promptStack.isEmpty())
 		{
-			id = promptStack.remove(0);
-			problemId = id;
+			ptp = promptStack.remove(0);
+			problemId = ptp.prompt;
+			enabled = ptp.enabled;
 			pData = pPusher.get(problemId);
 			if(pData != null)
 			{
 				tempOptionString = pData.getAllOptionsStrings();
 				if(tempOptionString!=null)
 				{
-					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+id+"\"}, \"A\"," + tempOptionString + "]");
+					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"," + tempOptionString + (enabled?"":", Enabled -> False") + "]");
 				}
 				else
 				{
-					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+id+"\"}, \"A\"]");
+					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"" + (enabled?"":", Enabled -> False") + "]");
 				}
 			}
 			else
 			{
-				xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+id+"\"}, \"A\"]");
+				xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"" + (enabled?"":", Enabled -> False") + "]");
 			}
 			
 			pData = parseXMLResponse(problemId, xmlString, pData);
+			pData.setEnabled(enabled);
 			reply += pData.getPrompt();
 			pPusher.push(problemId, pData);
 			
@@ -153,7 +158,8 @@ public class ProblemPuller
 				{
 					pData = new ProblemData();
 					pData.addOptionsString(problemId, tempOptionString);
-					pPusher.push(tempList.get(i), pData);
+					pData.setEnabled(tempList.get(i).enabled);
+					pPusher.push(tempList.get(i).prompt, pData);
 				}
 				
 				tempList = pData.getFetchPrompt();
@@ -161,7 +167,8 @@ public class ProblemPuller
 				{
 					pData = new ProblemData();
 					pData.addOptionsString(problemId, tempOptionString);
-					pPusher.push(tempList.get(i), pData);
+					pData.setEnabled(tempList.get(i).enabled);
+					pPusher.push(tempList.get(i).prompt, pData);
 				}
 			}
 		}

@@ -87,7 +87,7 @@ SetOptions[htmlInputField,Enabled->True];
 
 (*Put all input fields together and supply them with a 'Submit' button*)
 htmlInputFieldBuilder [ problemId_,prompt_, fields_,OptionsPattern[]]:=
-StringJoin["<div promptId = '",problemId,"' class='inputbox'>",prompt,"&nbsp;",fields<>"&nbsp;<input promptId = '",problemId,"' class='evalButton' type='button' value='Submit' enabled ='",If[OptionValue[Enabled],"true","false"],"' />&nbsp;<span id='resultsField",problemId,"'></span></div>"]
+StringJoin["<div promptId = '",problemId,"' class='inputbox'>",prompt,"&nbsp;",fields<>"&nbsp;<input promptId = '",problemId,"' class='evalButton' type='button' value='Submit'",If[OptionValue[Enabled],""," disabled='true'"]," />&nbsp;<span id='resultsField",problemId,"'></span></div>"]
 (*Set default options for htmlInputFieldBuilder*)
 Options[htmlInputFieldBuilder] = {Enabled->True};
 SetOptions[htmlInputFieldBuilder,Enabled->True];

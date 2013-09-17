@@ -79,7 +79,7 @@ public class CheckAnswers extends HttpServlet {
 
 			int event = xmlr.getEventType();
 			
-			while (xmlr.hasNext())
+/*			while (xmlr.hasNext())
 			{
 				switch(event)
 				{
@@ -124,6 +124,7 @@ public class CheckAnswers extends HttpServlet {
 				}
 				event = xmlr.next();
 			}
+			xmlr.close();*/
 		
 			xtw.writeEndElement();
 			xtw.writeEndDocument();
@@ -266,10 +267,6 @@ public class CheckAnswers extends HttpServlet {
 					}
 					else
 					{
-						XMLInputFactory xif = XMLInputFactory.newInstance();
-						xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
-						xif.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
-
 						String test = pData.getTestString();
 						String key, args = "",fieldKey,fieldValue;
 						String[] value;
@@ -319,8 +316,8 @@ public class CheckAnswers extends HttpServlet {
 						
 						PrintWriter out = response.getWriter();
 						
-						out.print(parseXMLTestResponse(id,kTalker.evaluateToString(test + args),pData));
-	//					out.print("<p>" + kTalker.evaluateToString(test+args) + "</p><p>"+ test + args + "</p>");
+//						out.print(parseXMLTestResponse(id,kTalker.evaluateToString(test + args),pData));
+						out.print("<p>" + kTalker.evaluateToString(test+args) + "</p><p>"+ test + args + "</p>");
 						out.close();
 					}
 				}

@@ -11,6 +11,7 @@ public class ProblemData
 	public ProblemData()
 	{
 		super();
+		this.enabled = true;
 		this.numberOfTries = 0;
 		this.numberOfTriesLeft = 0;
 		this.evalString = "";
@@ -25,6 +26,14 @@ public class ProblemData
 		this.fetchOnlyIfRight = true;
 		this.reFetchIfUpdate = true;
 		this.dependencies = new ArrayList<String>();
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
 	public HashMap<String, String> getOptionsStrings()
@@ -261,6 +270,7 @@ public class ProblemData
 
 	private static final Pattern optsPattern = Pattern.compile("^\\s*\\{|\\}\\s*$");
 	
+	boolean enabled;
 	String prompt;			//Stores the html code that will be sent to a user
 	int numberOfTries;		//Number of attempts at the answer. 0 = infinite
 	int numberOfTriesLeft;	//Counts backward to zero. Once zero, no submissions will be tested and recorded
