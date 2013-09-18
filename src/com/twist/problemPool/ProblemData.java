@@ -11,7 +11,10 @@ public class ProblemData
 	public ProblemData()
 	{
 		super();
+		this.XMLString = null;
 		this.enabled = true;
+		this.generated = false;
+		this.id = null;
 		this.numberOfTries = 0;
 		this.numberOfTriesLeft = 0;
 		this.evalString = "";
@@ -28,12 +31,42 @@ public class ProblemData
 		this.dependencies = new ArrayList<String>();
 	}
 
+	public boolean isGenerated()
+	{
+		return generated;
+	}
+
+	public void setGenerated(boolean generated)
+	{
+		this.generated = generated;
+	}
+
 	public boolean isEnabled() {
 		return enabled;
 	}
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public String getXMLString()
+	{
+		return XMLString;
+	}
+
+	public void setXMLString(String xMLString)
+	{
+		XMLString = xMLString;
+	}
+
+	public String getId()
+	{
+		return id;
+	}
+
+	public void setId(String id)
+	{
+		this.id = id;
 	}
 
 	public HashMap<String, String> getOptionsStrings()
@@ -271,6 +304,9 @@ public class ProblemData
 	private static final Pattern optsPattern = Pattern.compile("^\\s*\\{|\\}\\s*$");
 	
 	boolean enabled;
+	boolean generated;
+	String XMLString;
+	String id;
 	String prompt;			//Stores the html code that will be sent to a user
 	int numberOfTries;		//Number of attempts at the answer. 0 = infinite
 	int numberOfTriesLeft;	//Counts backward to zero. Once zero, no submissions will be tested and recorded

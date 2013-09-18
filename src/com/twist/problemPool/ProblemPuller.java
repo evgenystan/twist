@@ -120,30 +120,11 @@ public class ProblemPuller
 		while(!promptStack.isEmpty())
 		{
 			ptp = promptStack.remove(0);
+			pData = ProblemPuller.generateProblem(ptp, pPusher, kTalker);
+
 			problemId = ptp.prompt;
 			enabled = ptp.enabled;
-			pData = pPusher.get(problemId);
-			if(pData != null)
-			{
-				tempOptionString = pData.getAllOptionsStrings();
-				if(tempOptionString!=null)
-				{
-					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"," + tempOptionString + (enabled?"":", Enabled -> False") + "]");
-				}
-				else
-				{
-					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"" + (enabled?"":", Enabled -> False") + "]");
-				}
-			}
-			else
-			{
-				xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"" + (enabled?"":", Enabled -> False") + "]");
-			}
-			
-			pData = parseXMLResponse(problemId, xmlString, pData);
-			pData.setEnabled(enabled);
 			reply += pData.getPrompt();
-			pPusher.push(problemId, pData);
 			
 			tempList = pData.getSupplyPrompts();
 			if ((tempList != null)&&(tempList.size()>0))
@@ -175,7 +156,43 @@ public class ProblemPuller
 		return reply;
 	}
 	
-	private ProblemData parseXMLResponse(String id, String str, ProblemData pData)
+	public static ProblemData generateProblem(PromptToPull ptp, ProblemDataPusher pPusher, KernelTalker kTalker)
+	{
+		String problemId = ptp.prompt;
+		boolean enabled = ptp.enabled;
+		ProblemData pData = pPusher.get(problemId);
+		
+		String xmlString,tempOptionString;
+		
+		if(pData != null)
+		{
+			if(!pData.isGenerated())
+			{
+				tempOptionString = pData.getAllOptionsStrings();
+				if(tempOptionString!=null)
+				{
+					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"," + tempOptionString + (enabled?"":", Enabled -> False") + "]");
+				}
+				else
+				{
+					xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"" + (enabled?"":", Enabled -> False") + "]");
+				}
+				pData = parseXMLResponse(problemId, xmlString, pData);
+			}
+		}
+		else
+		{
+			xmlString = kTalker.evaluateToString("Needs[\"math1206`\"];makeproblem[{\""+problemId+"\"}, \"A\"" + (enabled?"":", Enabled -> False") + "]");
+			pData = parseXMLResponse(problemId, xmlString, pData);
+		}
+		
+		pData.setEnabled(enabled);
+		pPusher.push(problemId, pData);
+		
+		return pData;
+	}
+	
+	private static ProblemData parseXMLResponse(String id, String str, ProblemData pData)
 	{
 		boolean inPrompt			=false;
 		boolean inNumberOfTries		=false;
@@ -197,6 +214,8 @@ public class ProblemPuller
 		boolean enabled				=true;
 		
 		if (pData == null) {pData = new ProblemData();}
+		pData.setXMLString(str);
+		pData.setId(id);
 		try
 		{
 			XMLInputFactory xif = XMLInputFactory.newInstance();
@@ -275,6 +294,7 @@ public class ProblemPuller
 				event = xmlr.next();
 			}
 			xmlr.close();
+			pData.setGenerated(true);
 		}
 		catch (FactoryConfigurationError e)
 		{

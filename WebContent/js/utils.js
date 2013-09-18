@@ -160,7 +160,7 @@ function sendToEvaluate(evt)
 	
 	for (var i=0, m = fieldList.length;i<m;i++)
 	{
-		sendPacket[fieldList[i].getAttribute('fieldid')] = fieldList[i].textContent;
+		sendPacket['iField' + fieldList[i].getAttribute('fieldid')] = fieldList[i].textContent;
 	}
 	
 	sendPacket['total'] = i;

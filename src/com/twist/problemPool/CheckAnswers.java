@@ -37,30 +37,27 @@ public class CheckAnswers extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
     
-    private String parseXMLTestResponse(String id, String str,ProblemData pData)
+    private String parseXMLTestResponse(String id, String str,ProblemData pData, ProblemDataPusher pPusher, KernelTalker kTalker)
     {
     	String outgoingXML;
-		boolean inPrompt			=false;
-		boolean inNumberOfTries		=false;
-		boolean inNumberOfTriesLeft	=false;
-		boolean inOptionsString		=false;
-		boolean inEvalString		=false;
-		boolean inTestString		=false;
-		boolean inAnswerFields		=false;
-		boolean inAnswerComments	=false;
-		boolean inAnswerCorrect		=false;
-		boolean inFetchPrompt		=false;
-		boolean inSupplyPrompts		=false;
-		boolean inPromptFetched		=false;
-		boolean inFetchOnlyIfRight	=false;
-		boolean inReFetchIfUpdate	=false;
-		boolean inDependencies		=false;
+		boolean inTestResponse		=false;
+		boolean inEnablePrompt		=false;
+		boolean inNewPrompts		=false;
+		boolean inComment			=false;
 		
 		boolean pushList			=false;
+		
+		String promptIdAttr;
+		String correctAttr;
+		String acceptedAttr;
+		String fieldIdAttr;
+		String beforeAttr;
+		String afterAttr;
 		
 		if (pData == null) {return "<?xml version='1.0'?><checkResponse><error>Internal Error: null pointer is supplied to parseXMLTestResponse</error></checkResponse>";}
 		try
 		{
+			ProblemData fetchData;
 			XMLOutputFactory xof =  XMLOutputFactory.newInstance();
 			XMLInputFactory xif = XMLInputFactory.newInstance();
 			xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
@@ -74,59 +71,104 @@ public class CheckAnswers extends HttpServlet {
 
 			xtw.writeStartDocument("utf-8","1.0");
 //			xtw.writeDTD("<!DOCTYPE TestResponse>");
-			xtw.writeStartElement("checkResponse");
-			xtw.writeAttribute("promptId", id);
 
 			int event = xmlr.getEventType();
 			
-/*			while (xmlr.hasNext())
+			while (xmlr.hasNext())
 			{
 				switch(event)
 				{
 					case XMLStreamConstants.START_ELEMENT :
 						//Strings
-						if	   (xmlr.getLocalName().equals("prompt")) {inPrompt = true;}
-						else if(xmlr.getLocalName().equals("numberOfTries")) {inNumberOfTries = true;}
-						else if(xmlr.getLocalName().equals("evalString")) {inEvalString = true;}
-						else if(xmlr.getLocalName().equals("testString")) {inTestString = true;}
+						if	   (xmlr.getLocalName().equals("testResponse")) 
+						{
+							inTestResponse = true;
+							xtw.writeStartElement("checkResponse");
+							promptIdAttr = xmlr.getAttributeValue(null, "promptId");
+							if(promptIdAttr!=null) xtw.writeAttribute("promptId", promptIdAttr); else xtw.writeAttribute("promptId", id);
+							
+							correctAttr = xmlr.getAttributeValue(null,"correct");
+							if(correctAttr!=null) xtw.writeAttribute("correct", correctAttr);
+							
+							acceptedAttr = xmlr.getAttributeValue(null,"accepted");
+							if(acceptedAttr!=null) xtw.writeAttribute("accepted", acceptedAttr);
+						}
+						else if(xmlr.getLocalName().equals("comment")) 
+						{
+							inComment = true;
+							xtw.writeStartElement("comment");
+							fieldIdAttr = xmlr.getAttributeValue(null,"fieldId");
+							if(fieldIdAttr!=null) xtw.writeAttribute("fieldId", fieldIdAttr);
+							xtw.writeCharacters(xmlr.getElementText());
+						}
 						//Lists
-						else if(xmlr.getLocalName().equals("optionsString")) {inOptionsString = true;}
-						else if(xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = true; pData.resetFetchPrompt();}
-						else if(xmlr.getLocalName().equals("supplyPrompts")) {inSupplyPrompts = true; pData.resetSupplyPrompts();}
-						else if(xmlr.getLocalName().equals("dependencies")) {inDependencies = true; pData.resetDependencies();}
-						else if(xmlr.getLocalName().equals("id")) {pushList = true;}
-						//Boolean
-						else if(xmlr.getLocalName().equals("fetchOnlyIfRight")) {inFetchOnlyIfRight = true;}
-						else if(xmlr.getLocalName().equals("reFetchIfUpdate")) {inReFetchIfUpdate = true;}
+						else if(xmlr.getLocalName().equals("enablePrompt")) {inEnablePrompt = true; xtw.writeStartElement("enablePrompt");}
+						else if(xmlr.getLocalName().equals("newPrompts")) {inNewPrompts = true; xtw.writeStartElement("newPrompts");}
+						else if(xmlr.getLocalName().equals("id")) 
+						{
+							pushList = true;
+							xtw.writeStartElement("id");
+							promptIdAttr = xmlr.getAttributeValue(null,"promptId");
+							if(promptIdAttr!=null) xtw.writeAttribute("promptId", promptIdAttr);
+
+							afterAttr = xmlr.getAttributeValue(null,"after");
+							if(afterAttr!=null) xtw.writeAttribute("after", afterAttr);
+							else
+							{
+								beforeAttr = xmlr.getAttributeValue(null,"before");
+								if(beforeAttr!=null) xtw.writeAttribute("before", beforeAttr);
+							}
+							xtw.writeCharacters(xmlr.getElementText());
+						}
 					break;
-					case XMLStreamConstants.CHARACTERS:
+/*					case XMLStreamConstants.ATTRIBUTE :
+						if		(xmlr.getLocalName().equals("promptId")) {promptIdAttr = xmlr.getAttributeValue(0);}
+						else if	(xmlr.getLocalName().equals("correct")) {correctAttr = xmlr.getAttributeValue(0);}
+						else if	(xmlr.getLocalName().equals("accepted")) {acceptedAttr = xmlr.getAttributeValue(0);}
+						else if	(xmlr.getLocalName().equals("fieldId")) {fieldIdAttr = xmlr.getAttributeValue(0);}
+						else if	(xmlr.getLocalName().equals("before")) {beforeAttr = xmlr.getAttributeValue(0);}
+						else if	(xmlr.getLocalName().equals("after")) {afterAttr = xmlr.getAttributeValue(0);}
+					break;*/
+/*					case XMLStreamConstants.CHARACTERS:
 						if(pushList)
 						{
-							if		(inFetchPrompt) 	{pData.addFetchPrompt(xmlr.getText());}
-							else if	(inSupplyPrompts) 	{pData.addSupplyPrompts(xmlr.getText());}
-							else if	(inDependencies) 	{pData.addDependency(xmlr.getText());}
-							
+							if	(inEnablePrompt) 	
+							{
+							}
+							else if	(inNewPrompts) 	
+							{
+							}
 							pushList = false;
 						}
-						//Technically, optionsString is a map list, but we only support one string per problem generator. Other strings may be inserted by other problems.
-						else if (inOptionsString) 	{inOptionsString = false;	pData.addOptionsString(id, xmlr.getText());}
-						else if (inPrompt) 			{inPrompt = false;			pData.setPrompt(xmlr.getText());}
-						else if (inNumberOfTries) 	{inNumberOfTries = false;	pData.setNumberOfTries(Integer.parseInt(xmlr.getText()));}
-						else if (inTestString)		{inTestString = false;		pData.setTestString(xmlr.getText());}
-						else if (inFetchOnlyIfRight){inFetchOnlyIfRight = false;pData.setFetchOnlyIfRight(Boolean.parseBoolean(xmlr.getText()));}
-						else if (inReFetchIfUpdate)	{inReFetchIfUpdate = false;	pData.setReFetchIfUpdate(Boolean.parseBoolean(xmlr.getText()));}
-					break;
+					break;*/
 					case XMLStreamConstants.END_ELEMENT:
-						if	   (xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = false;}
-						else if(xmlr.getLocalName().equals("supplyPrompts")) {inSupplyPrompts = false;}
-						else if(xmlr.getLocalName().equals("dependencies")) {inDependencies = false;}
+						if		(xmlr.getLocalName().equals("enablePrompt"))	{inEnablePrompt = false;xtw.writeEndElement();}
+						else if	(xmlr.getLocalName().equals("newPrompts"))		{inNewPrompts = false;xtw.writeEndElement();}
+						else if (xmlr.getLocalName().equals("testResponse"))	{inTestResponse = false;}
+						else if (xmlr.getLocalName().equals("comment")) 		{inComment = false;xtw.writeEndElement();}
+						else if (xmlr.getLocalName().equals("id")) 				{pushList = false;xtw.writeEndElement();}
 					break;
 				}
 				event = xmlr.next();
 			}
-			xmlr.close();*/
+			xmlr.close();
 		
-			xtw.writeEndElement();
+			ArrayList<PromptToPull> tempList = pData.getFetchPrompt();
+			int m = tempList.size();
+			if(m>0)
+			{
+				xtw.writeStartElement("newPrompts");
+				for(int i=0; i<m;i++)
+				{
+					fetchData = ProblemPuller.generateProblem(tempList.get(i), pPusher, kTalker);
+					xtw.writeStartElement("id");
+					xtw.writeAttribute("promptId", tempList.get(i).prompt);
+					xtw.writeCharacters(fetchData.getPrompt());
+					xtw.writeEndElement();
+				}
+				xtw.writeEndElement();
+			}
+			xtw.writeEndElement();//Close the checkResponse tag
 			xtw.writeEndDocument();
 			xtw.flush();
 			outgoingXML = stringBuffer.toString();
@@ -215,11 +257,10 @@ public class CheckAnswers extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
-		response.setContentType("text/plain");
 		String id=request.getParameter("id");
 		KernelTalker kTalker = new KernelTalker();
 		
-		// TODO Check if submission is possible. If submission is happened when numberOfTriesLeft is zero log the event
+		// TODO Check if submission is possible. If submission is happened when numberOfTriesLeft is zero log the event and generate an XML string with error report
 		
 		if (id == null)
 		{
@@ -232,6 +273,7 @@ public class CheckAnswers extends HttpServlet {
 			if(pData == null)
 			{
 				int intId = Integer.parseInt(request.getParameter("id"));
+				response.setContentType("text/plain");
 				
 				String 	args = "", 
 						evalString = ProblemDataPusher.problemDataStorage.get(intId);
@@ -242,7 +284,7 @@ public class CheckAnswers extends HttpServlet {
 				args = String.valueOf(numberOfFields);
 				for (i = 1; i <= numberOfFields; i++)
 				{
-					args += ",\"" + request.getParameter(String.valueOf(i)) + "\"";
+					args += ",\"" + request.getParameter("iField"+String.valueOf(i)) + "\"";
 				}
 				args = "{" + args;
 				args += "}";
@@ -261,9 +303,9 @@ public class CheckAnswers extends HttpServlet {
 					response.setContentType("text/xml");
 					int	tryCounter = pData.getNumberOfTriesLeft();
 							
-					if(tryCounter == 0)
+					if((pData.getNumberOfTries()>0)&&(tryCounter == 0))
 					{
-						
+						// TODO reply with an error message that number of tries is exhausted
 					}
 					else
 					{
@@ -276,15 +318,14 @@ public class CheckAnswers extends HttpServlet {
 						for (Map.Entry<String, String[]> entry : pars.entrySet()) 
 						{
 						    key = entry.getKey();
-						    if((key.equals("total"))||(key.equals("id")))
+						    if(key.startsWith("iField"))
 						    {
-						    	continue;
+								if(argcount>0) args +=", ";
+								argcount++;
+							    value = entry.getValue();
+							    args += "\"" + key.substring(6) + "\" -> \"" + value[0] + "\"";
+							    pData.addAnswerField(key.substring(6),value[0]);
 						    }
-							if(argcount>0) args +=", ";
-							argcount++;
-						    value = entry.getValue();
-						    args += "\"" + key + "\" -> \"" + value[0] + "\"";
-						    pData.addAnswerField(key,value[0]);
 						}
 						
 						if(!pData.getDependencies().isEmpty())
@@ -299,7 +340,7 @@ public class CheckAnswers extends HttpServlet {
 							{
 								depId = stack.remove(0);
 								depData = pPusher.get(depId);
-								
+								// TODO Check if depData.getAnswerFields() is nonempty, if it is, generate an XML string with error
 								for (Map.Entry<String, String> entry : depData.getAnswerFields().entrySet()) 
 								{
 									if(argcount>0) args +=", ";
@@ -316,8 +357,8 @@ public class CheckAnswers extends HttpServlet {
 						
 						PrintWriter out = response.getWriter();
 						
-//						out.print(parseXMLTestResponse(id,kTalker.evaluateToString(test + args),pData));
-						out.print("<p>" + kTalker.evaluateToString(test+args) + "</p><p>"+ test + args + "</p>");
+						out.print(parseXMLTestResponse(id,kTalker.evaluateToString(test + args),pData,pPusher,kTalker));
+//						out.print("<p>" + kTalker.evaluateToString(test+args) + "</p><p>"+ test + args + "</p>");
 						out.close();
 					}
 				}

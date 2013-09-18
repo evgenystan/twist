@@ -1,10 +1,19 @@
 <?xml version='1.0'?>
 <!DOCTYPE TestResponse>
-<response promptId='' correct='yes' enableSubmit='yes'>
-	<comments>
-		<field id='1'></field>
-	</comments>
-	<newPrompt promptId='' before='' after=''>
-		<div></div>
-	</newPrompt>
-</response>
+<checkResponse promptId='' correct = 'true/false yes/no 1/0' accepted = 'true/false yes/no 1/0'>
+	<comment>
+		Everything is wrong
+	</comment>
+	<comment fieldId = 'uSub'>
+		Incorrect syntax
+	</comment>
+	<enablePrompt>
+		<id>1206.21.1</id>
+		<id>1206.21.2</id>
+	</enablePrompt>
+	<newPrompts>
+		<id  promptId='' before='' after=''>
+			<div></div>
+		</id>
+	</newPrompts>
+</checkResponse>

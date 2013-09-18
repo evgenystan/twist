@@ -49,7 +49,7 @@ StringJoin["<",openXMLNode[node[[1]]],"/>\n"],
 StringJoin["\n<",openXMLNode[node[[1]]],">",StringJoin@@Map[makeXMLNode[#]&,Drop[node,1]],"</",closeXMLNode[node[[1]]],">"]
 ]
 
-makeXMLNode[text_String]:=text
+makeXMLNode[text_String]:=StringReplace[ExportString[XMLElement["t",{},{text}],"XML","Entities"->"HTML"],{StartOfString~~"<t>"->"","</t>"~~EndOfString->""}]
 
 openXMLNode[name_String]:=name
 closeXMLNode[name_String]:=name
