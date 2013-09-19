@@ -119,5 +119,6 @@ If your browser supports JavaScript, be sure it is enabled.</b>
 		}
 	%>
 </div>
+<script type="text/javascript" src="js/jquery.qtip-1.0.0-rc3.js"></script> 
 </body>
 </html>

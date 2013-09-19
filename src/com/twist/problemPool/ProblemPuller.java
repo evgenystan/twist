@@ -114,7 +114,7 @@ public class ProblemPuller
 				xmlString, 
 				tempOptionString;
 		
-		ptp = new PromptToPull(course+"."+id);
+		ptp = new PromptToPull(course+"."+id,true,true);
 		promptStack.add(ptp);
 		kTalker.executeCommand("SetDirectory[\"/Users/\"<>$UserName<>\"/Google Drive/Eclipse Workspace/twist/src/Mathematica\"]");
 		while(!promptStack.isEmpty())
@@ -166,7 +166,7 @@ public class ProblemPuller
 		
 		if(pData != null)
 		{
-			if(!pData.isGenerated())
+			if((!pData.isGenerated())||(ptp.regenerate))
 			{
 				tempOptionString = pData.getAllOptionsStrings();
 				if(tempOptionString!=null)

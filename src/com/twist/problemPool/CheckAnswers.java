@@ -103,7 +103,18 @@ public class CheckAnswers extends HttpServlet {
 							xtw.writeEndElement();
 						}
 						//Lists
-						else if(xmlr.getLocalName().equals("enablePrompt")) {inEnablePrompt = true; xtw.writeStartElement("enablePrompt");}
+						else if(xmlr.getLocalName().equals("enablePrompt")) 
+						{
+							inEnablePrompt = true; 
+							xtw.writeStartElement("enablePrompt");
+							
+							if((pData.getNumberOfTries()==0)||(pData.getNumberOfTriesLeft()>0))
+							{
+								xtw.writeStartElement("id");
+								xtw.writeCharacters(pData.getId());
+								xtw.writeEndElement();
+							}
+						}
 						else if(xmlr.getLocalName().equals("newPrompts")) {inNewPrompts = true; xtw.writeStartElement("newPrompts");}
 						else if(xmlr.getLocalName().equals("id")) 
 						{

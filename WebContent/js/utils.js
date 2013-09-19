@@ -151,21 +151,46 @@ function findParentDiv(node)
 
 function sendToEvaluate(evt)
 {
-	var url=rootdomain.replace(/[^/]*jsp$/,"")+"CheckAnswers";
+	var ajaxurl=rootdomain.replace(/[^/]*jsp$/,"")+"CheckAnswers";
 	
 	var div=findParentDiv(evt.target);
 	var sendPacket={id : evt.target.getAttribute("promptId")};
 	
-	var fieldList=div.getElementsByClassName("inputfield");
+	var fieldList=div.getElementsByClassName("inputfield"),field;
+	
+	$(div).find('[id="resultsField'+evt.target.getAttribute("promptId")+'"]').html("");
 	
 	for (var i=0, m = fieldList.length;i<m;i++)
 	{
-		sendPacket['iField' + fieldList[i].getAttribute('fieldid')] = fieldList[i].textContent;
+		field = $(fieldList[i]);
+		if((field.data)&&(field.data('qtip') != undefined))
+		{
+			field.qtip("destroy");
+		}
+		sendPacket['iField' + field.attr('fieldid')] = field.text();
 	}
 	
 	sendPacket['total'] = i;
+	jQuery.ajax(
+		{
+			url:		ajaxurl,
+			async:		true,
+			data:		sendPacket,
+			success:		showResults,
+			error:		MathJax.Callback([handleTimeout,evt]),
+			timeout:	1e4,
+			type:		'POST',
+			
+		}
+	);
 
-    $.post(url, sendPacket,showResults);
+//    $.post(ajaxurl, sendPacket,showResults);
+}
+
+function handleTimeout(evt)
+{
+	evt.target.removeAttribute('disabled');
+	alert('Request timed out. Try again.');
 }
 
 function addInputField(evt)
@@ -211,10 +236,47 @@ function removeInputField(evt)
 
 function showResults(data, textStatus, jqXHR, dataType)
 {
-	var id=/id=([0123456789\.]*)/i.exec(this.data)[1];
-	var span = document.getElementById('resultsField'+id);
-	
-	span.innerHTML = data.replace(/"/g,"");
+	if(data.getElementsByTagName)
+	{
+		var commentlist = data.getElementsByTagName("comment"),comment,fieldId;
+		var id = data.getElementsByTagName("checkResponse")[0].getAttribute('promptId');
+		var resultSpan = document.getElementById('resultsField'+id);
+		var div = findParentDiv(resultSpan);
+		
+		for(var i =0,m=commentlist.length;i<m;i++)
+		{
+			comment = commentlist[i];
+			fieldId = comment.getAttribute('fieldId');
+			if(fieldId)
+			{
+				$(div).find('[fieldid="'+fieldId+'"]').qtip(
+															{
+																content: comment.textContent, // Use the tooltip attribute of the element for the content
+																style: 'dark' // Give it a crea mstyle to make it stand out
+															});
+			}
+			else
+			{
+				resultSpan.innerHTML = comment.textContent;
+			}
+		}
+		
+		var enableList = data.getElementsByTagName("enablePrompt")[0],child;
+		
+		for(var i = 0, m= enableList.childNodes.length;i<m;i++)
+		{
+			child = enableList.childNodes[i];
+			$('input[promptId="'+child.textContent+'"]').removeAttr('disabled');
+		}
+	}
+	else
+	{
+		var id=/id=([0123456789\.]*)/i.exec(this.data)[1];
+		var span = document.getElementById('resultsField'+id);
+		
+		span.innerHTML = data.replace(/"/g,"");
+	}
+
 }
 
 $(document).ready(function() {

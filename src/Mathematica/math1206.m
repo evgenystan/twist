@@ -157,7 +157,7 @@ Throw[makeXMLDocument[{{"testResponse",{"accepted","false"},{"promptId","1206.21
 If[Not[NumericQ[Simplify[(uSub)/.x->1]]],
 Throw[makeXMLDocument[{{"testResponse",{"accepted","false"},{"promptId","1206.21.1"}},{"comment","Substitution must be a function of x only."},{{"comment",{"fieldId","uSub"}},"Check if there are variables other than x."}}]]
 ,
-Throw[makeXMLDocument[{{"testResponse",{"accepted","true"},{"promptId","1206.21.1"}},{{"comment",{"fieldId","uSub"}},"<strong>Accepted</strong>"},{"enablePrompt",{"id","1206.21.2"}}}]]
+Throw[makeXMLDocument[{{"testResponse",{"accepted","true"},{"promptId","1206.21.1"}},{{"comment",{"fieldId","uSub"}},"<strong>Accepted</strong>"},{"comment","&#10003;"},{"enablePrompt",{"id","1206.21.2"}}}]]
 ]
 ];
 ]
