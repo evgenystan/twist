@@ -100,6 +100,7 @@ public class CheckAnswers extends HttpServlet {
 							fieldIdAttr = xmlr.getAttributeValue(null,"fieldId");
 							if(fieldIdAttr!=null) xtw.writeAttribute("fieldId", fieldIdAttr);
 							xtw.writeCharacters(xmlr.getElementText());
+							xtw.writeEndElement();
 						}
 						//Lists
 						else if(xmlr.getLocalName().equals("enablePrompt")) {inEnablePrompt = true; xtw.writeStartElement("enablePrompt");}
@@ -119,6 +120,7 @@ public class CheckAnswers extends HttpServlet {
 								if(beforeAttr!=null) xtw.writeAttribute("before", beforeAttr);
 							}
 							xtw.writeCharacters(xmlr.getElementText());
+							xtw.writeEndElement();
 						}
 					break;
 /*					case XMLStreamConstants.ATTRIBUTE :
@@ -145,8 +147,8 @@ public class CheckAnswers extends HttpServlet {
 						if		(xmlr.getLocalName().equals("enablePrompt"))	{inEnablePrompt = false;xtw.writeEndElement();}
 						else if	(xmlr.getLocalName().equals("newPrompts"))		{inNewPrompts = false;xtw.writeEndElement();}
 						else if (xmlr.getLocalName().equals("testResponse"))	{inTestResponse = false;}
-						else if (xmlr.getLocalName().equals("comment")) 		{inComment = false;xtw.writeEndElement();}
-						else if (xmlr.getLocalName().equals("id")) 				{pushList = false;xtw.writeEndElement();}
+/*						else if (xmlr.getLocalName().equals("comment")) 		{inComment = false;xtw.writeEndElement();}
+						else if (xmlr.getLocalName().equals("id")) 				{pushList = false;xtw.writeEndElement();}*/
 					break;
 				}
 				event = xmlr.next();
@@ -273,7 +275,7 @@ public class CheckAnswers extends HttpServlet {
 			if(pData == null)
 			{
 				int intId = Integer.parseInt(request.getParameter("id"));
-				response.setContentType("text/plain");
+				response.setContentType("text/plain; charset=UTF-8");
 				
 				String 	args = "", 
 						evalString = ProblemDataPusher.problemDataStorage.get(intId);
@@ -300,7 +302,7 @@ public class CheckAnswers extends HttpServlet {
 				Map<String,String[]> pars = request.getParameterMap();
 				if(pData != null)
 				{
-					response.setContentType("text/xml");
+					response.setContentType("text/xml; charset=UTF-8");
 					int	tryCounter = pData.getNumberOfTriesLeft();
 							
 					if((pData.getNumberOfTries()>0)&&(tryCounter == 0))

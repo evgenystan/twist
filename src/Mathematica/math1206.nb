@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       145,          7]
-NotebookDataLength[    109049,       2358]
-NotebookOptionsPosition[    106797,       2280]
-NotebookOutlinePosition[    107171,       2296]
-CellTagsIndexPosition[    107128,       2293]
+NotebookDataLength[    109735,       2372]
+NotebookOptionsPosition[    107482,       2294]
+NotebookOutlinePosition[    107856,       2310]
+CellTagsIndexPosition[    107813,       2307]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -869,7 +869,8 @@ Cell[BoxData[
                     RowBox[{"\"\<comment\>\"", ",", 
                     RowBox[{"{", 
                     RowBox[{"\"\<fieldId\>\"", ",", "\"\<uSub\>\""}], "}"}]}],
-                     "}"}], ",", "\"\<Accepted\>\""}], "}"}], ",", 
+                     "}"}], ",", "\"\<<strong>Accepted</strong>\>\""}], "}"}],
+                     ",", 
                     RowBox[{"{", 
                     RowBox[{"\"\<enablePrompt\>\"", ",", 
                     RowBox[{"{", 
@@ -967,7 +968,7 @@ Cell[BoxData[
    3.588374834710556*^9, 3.588374837231213*^9}, {3.588374925847157*^9, 
    3.5883749275894117`*^9}, {3.588375009798625*^9, 3.5883750315172462`*^9}, {
    3.588375067902649*^9, 3.588375097610818*^9}, {3.5883753115584087`*^9, 
-   3.58837531365337*^9}}],
+   3.58837531365337*^9}, 3.58851839977695*^9}],
 
 Cell[BoxData[
  RowBox[{
@@ -1656,7 +1657,10 @@ Cell[BoxData[{
                     RowBox[{"{", 
                     RowBox[{"\"\<testResponse\>\"", ",", 
                     RowBox[{"{", 
-                    RowBox[{"\"\<accepted\>\"", ",", "\"\<false\>\""}], 
+                    RowBox[{"\"\<accepted\>\"", ",", "\"\<false\>\""}], "}"}],
+                     ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<promptId\>\"", ",", "\"\<1206.21.1\>\""}], 
                     "}"}]}], "}"}], ",", 
                     RowBox[{"{", 
                     RowBox[{
@@ -1689,7 +1693,10 @@ Cell[BoxData[{
                     RowBox[{"{", 
                     RowBox[{"\"\<testResponse\>\"", ",", 
                     RowBox[{"{", 
-                    RowBox[{"\"\<accepted\>\"", ",", "\"\<false\>\""}], 
+                    RowBox[{"\"\<accepted\>\"", ",", "\"\<false\>\""}], "}"}],
+                     ",", 
+                    RowBox[{"{", 
+                    RowBox[{"\"\<promptId\>\"", ",", "\"\<1206.21.1\>\""}], 
                     "}"}]}], "}"}], ",", 
                     RowBox[{"{", 
                     RowBox[{
@@ -1724,7 +1731,8 @@ Cell[BoxData[{
                     RowBox[{"\"\<comment\>\"", ",", 
                     RowBox[{"{", 
                     RowBox[{"\"\<fieldId\>\"", ",", "\"\<uSub\>\""}], "}"}]}],
-                     "}"}], ",", "\"\<Accepted\>\""}], "}"}], ",", 
+                     "}"}], ",", "\"\<<strong>Accepted</strong>\>\""}], "}"}],
+                     ",", 
                     RowBox[{"{", 
                     RowBox[{"\"\<enablePrompt\>\"", ",", 
                     RowBox[{"{", 
@@ -1753,7 +1761,8 @@ Cell[BoxData[{
    3.588128198567008*^9}, {3.588128500429965*^9, 3.588128501268221*^9}, {
    3.58812864843379*^9, 3.5881287116459913`*^9}, {3.588128758917913*^9, 
    3.588128789634309*^9}, 3.588375124779336*^9, {3.58845549787492*^9, 
-   3.588455539602199*^9}}],
+   3.588455539602199*^9}, 3.588505145376853*^9, {3.588505280560561*^9, 
+   3.5885052955191317`*^9}}],
 
 Cell[BoxData["\<\"Module[{uSub}, uSub = StringReplace[\\\"uSub\\\", {##1}]; \
 Catch[If[ !SyntaxQ[uSub], Throw[makeXMLDocument[{{\\\"testResponse\\\", \
@@ -1768,26 +1777,31 @@ WordBoundary~~\\\"x(\\\" -> \\\"x*(\\\", \
 WordBoundary~~\\\"E\\\"~~Whitespace~~\\\"(\\\" -> \\\"E*(\\\", WordBoundary~~\
 \\\"E(\\\" -> \\\"E*(\\\"}], TraditionalForm]; If[NumberQ[Simplify[uSub/x]], \
 Throw[makeXMLDocument[{{\\\"testResponse\\\", {\\\"accepted\\\", \
-\\\"false\\\"}}, {\\\"comment\\\", \\\"Substitution must not be a multiple of \
-x\\\"}, {{\\\"comment\\\", {\\\"fieldId\\\", \\\"uSub\\\"}}, \\\"Substitution \
-must not be a multiple of x\\\"}}]], If[ !NumericQ[Simplify[uSub /. x -> 1]], \
+\\\"false\\\"}, {\\\"promptId\\\", \\\"1206.21.1\\\"}}, {\\\"comment\\\", \
+\\\"Substitution must not be a multiple of x\\\"}, {{\\\"comment\\\", \
+{\\\"fieldId\\\", \\\"uSub\\\"}}, \\\"Substitution must not be a multiple of \
+x\\\"}}]], If[ !NumericQ[Simplify[uSub /. x -> 1]], \
 Throw[makeXMLDocument[{{\\\"testResponse\\\", {\\\"accepted\\\", \
-\\\"false\\\"}}, {\\\"comment\\\", \\\"Substitution must be a function of x \
-only.\\\"}, {{\\\"comment\\\", {\\\"fieldId\\\", \\\"uSub\\\"}}, \\\"Check if \
-there are variables other than x.\\\"}}]], \
-Throw[makeXMLDocument[{{\\\"testResponse\\\", {\\\"accepted\\\", \
+\\\"false\\\"}, {\\\"promptId\\\", \\\"1206.21.1\\\"}}, {\\\"comment\\\", \
+\\\"Substitution must be a function of x only.\\\"}, {{\\\"comment\\\", \
+{\\\"fieldId\\\", \\\"uSub\\\"}}, \\\"Check if there are variables other than \
+x.\\\"}}]], Throw[makeXMLDocument[{{\\\"testResponse\\\", {\\\"accepted\\\", \
 \\\"true\\\"}, {\\\"promptId\\\", \\\"1206.21.1\\\"}}, {{\\\"comment\\\", {\\\
-\"fieldId\\\", \\\"uSub\\\"}}, \\\"Accepted\\\"}, {\\\"enablePrompt\\\", \
-{\\\"id\\\", \\\"1206.21.2\\\"}}}]]]]; ]]; ]] & \"\>"], "Output",
+\"fieldId\\\", \\\"uSub\\\"}}, \\\"<strong>Accepted</strong>\\\"}, \
+{\\\"enablePrompt\\\", {\\\"id\\\", \\\"1206.21.2\\\"}}}]]]]; ]]; ]] & \
+\"\>"], "Output",
  CellChangeTimes->{
-  3.5883751305830603`*^9, {3.588455500189745*^9, 3.588455540434637*^9}}],
+  3.5883751305830603`*^9, {3.588455500189745*^9, 3.588455540434637*^9}, 
+   3.588505152877158*^9, 3.588505297069178*^9}],
 
 Cell[BoxData["\<\"<?xml version='1.0' encoding='UTF-8'?>\\n<testResponse \
 accepted='true' promptId='1206.21.1'>\\n<comment \
-fieldId='uSub'>Accepted</comment>\\n<enablePrompt>\\n<id>1206.21.2</id></\
-enablePrompt></testResponse>\"\>"], "Output",
+fieldId='uSub'>&lt;strong&gt;Accepted&lt;/strong&gt;</comment>\\n<\
+enablePrompt>\\n<id>1206.21.2</id></enablePrompt></testResponse>\"\>"], \
+"Output",
  CellChangeTimes->{
-  3.5883751305830603`*^9, {3.588455500189745*^9, 3.588455540438662*^9}}]
+  3.5883751305830603`*^9, {3.588455500189745*^9, 3.588455540434637*^9}, 
+   3.588505152877158*^9, 3.588505297121913*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -2305,60 +2319,60 @@ Cell[18423, 433, 557, 8, 43, "Output"]
 }, Open  ]],
 Cell[18995, 444, 9560, 201, 433, "Input",
  InitializationCell->True],
-Cell[28558, 647, 16154, 322, 703, "Input",
+Cell[28558, 647, 16213, 323, 703, "Input",
  InitializationCell->True],
-Cell[44715, 971, 21941, 435, 1288, "Input",
+Cell[44774, 972, 21941, 435, 1288, "Input",
  InitializationCell->True],
-Cell[66659, 1408, 139, 2, 27, "Input"],
+Cell[66718, 1409, 139, 2, 27, "Input"],
 Cell[CellGroupData[{
-Cell[66823, 1414, 229, 6, 27, "Input"],
-Cell[67055, 1422, 1446, 21, 163, "Output"]
+Cell[66882, 1415, 229, 6, 27, "Input"],
+Cell[67114, 1423, 1446, 21, 163, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[68538, 1448, 1175, 23, 27, "Input"],
-Cell[69716, 1473, 5950, 87, 478, "Output"]
+Cell[68597, 1449, 1175, 23, 27, "Input"],
+Cell[69775, 1474, 5950, 87, 478, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[75703, 1565, 8926, 190, 343, "Input"],
-Cell[84632, 1757, 1769, 25, 103, "Output"],
-Cell[86404, 1784, 339, 5, 88, "Output"]
+Cell[75762, 1566, 9326, 198, 373, "Input"],
+Cell[85091, 1766, 1916, 28, 103, "Output"],
+Cell[87010, 1796, 418, 7, 88, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[86780, 1794, 13031, 287, 823, "Input"],
-Cell[99814, 2083, 241, 3, 58, "Output"]
+Cell[87465, 1808, 13031, 287, 823, "Input"],
+Cell[100499, 2097, 241, 3, 58, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[100092, 2091, 121, 2, 27, "Input"],
-Cell[100216, 2095, 188, 3, 27, "Output"]
+Cell[100777, 2105, 121, 2, 27, "Input"],
+Cell[100901, 2109, 188, 3, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[100441, 2103, 573, 12, 58, "Input"],
-Cell[101017, 2117, 129, 2, 27, "Output"]
+Cell[101126, 2117, 573, 12, 58, "Input"],
+Cell[101702, 2131, 129, 2, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[101183, 2124, 263, 5, 27, "Input"],
-Cell[101449, 2131, 136, 2, 43, "Output"]
+Cell[101868, 2138, 263, 5, 27, "Input"],
+Cell[102134, 2145, 136, 2, 43, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[101622, 2138, 330, 9, 27, "Input"],
-Cell[101955, 2149, 99, 1, 27, "Output"]
+Cell[102307, 2152, 330, 9, 27, "Input"],
+Cell[102640, 2163, 99, 1, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[102091, 2155, 202, 4, 27, "Input"],
-Cell[102296, 2161, 87, 1, 27, "Output"]
+Cell[102776, 2169, 202, 4, 27, "Input"],
+Cell[102981, 2175, 87, 1, 27, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[102420, 2167, 1371, 31, 238, "Input"],
-Cell[103794, 2200, 507, 7, 133, "Output"]
+Cell[103105, 2181, 1371, 31, 238, "Input"],
+Cell[104479, 2214, 507, 7, 133, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[104338, 2212, 1343, 33, 253, "Input"],
-Cell[105684, 2247, 335, 5, 133, "Output"]
+Cell[105023, 2226, 1343, 33, 253, "Input"],
+Cell[106369, 2261, 335, 5, 133, "Output"]
 }, Open  ]],
-Cell[106034, 2255, 434, 11, 27, "Input"],
+Cell[106719, 2269, 434, 11, 27, "Input"],
 Cell[CellGroupData[{
-Cell[106493, 2270, 163, 3, 27, "Input"],
-Cell[106659, 2275, 122, 2, 27, "Output"]
+Cell[107178, 2284, 163, 3, 27, "Input"],
+Cell[107344, 2289, 122, 2, 27, "Output"]
 }, Open  ]]
 }
 ]
