@@ -205,13 +205,12 @@ public class ProblemPuller
 		boolean inAnswerCorrect		=false;
 		boolean inFetchPrompt		=false;
 		boolean inSupplyPrompts		=false;
-		boolean inPromptFetched		=false;
-		boolean inFetchOnlyIfRight	=false;
-		boolean inReFetchIfUpdate	=false;
 		boolean inDependencies		=false;
 		
 		boolean pushList			=false;
 		boolean enabled				=true;
+		boolean	refresh				=false;
+		boolean onlyIfRight			=true;
 		
 		if (pData == null) {pData = new ProblemData();}
 		pData.setXMLString(str);
@@ -225,7 +224,7 @@ public class ProblemPuller
 			StringReader sr = new StringReader(str);
 			XMLStreamReader xmlr = xif.createXMLStreamReader(sr);
 			int event = xmlr.getEventType();
-			String	enabledAttr;
+			String	enabledAttr,refreshAttr,onlyIfRightAttr;
 			PromptToPull ptp;
 			
 			while (xmlr.hasNext())
@@ -250,11 +249,14 @@ public class ProblemPuller
 							{
 								enabledAttr = xmlr.getAttributeValue(null, "enabled");
 								if(enabledAttr !=null) {enabled = Boolean.parseBoolean(enabledAttr);}
+
+								refreshAttr = xmlr.getAttributeValue(null, "refresh");
+								if(refreshAttr !=null) {refresh = Boolean.parseBoolean(refreshAttr);}
+
+								onlyIfRightAttr = xmlr.getAttributeValue(null, "onlyifright");
+								if(onlyIfRightAttr !=null) {onlyIfRight = Boolean.parseBoolean(onlyIfRightAttr);}
 							}
 						}
-						//Boolean
-						else if(xmlr.getLocalName().equals("fetchOnlyIfRight")) {inFetchOnlyIfRight = true;}
-						else if(xmlr.getLocalName().equals("reFetchIfUpdate")) {inReFetchIfUpdate = true;}
 					break;
 					case XMLStreamConstants.CHARACTERS:
 						if(pushList)
@@ -262,6 +264,9 @@ public class ProblemPuller
 							if	(inFetchPrompt) 	
 							{
 								ptp = new PromptToPull(xmlr.getText(),enabled);
+								ptp.fetchOnlyIfRight= onlyIfRight;
+								ptp.reFetchIfUpdate = refresh;
+								ptp.regenerate = refresh;
 								pData.addFetchPrompt(ptp);
 							}
 							else if	(inSupplyPrompts) 	
@@ -282,8 +287,6 @@ public class ProblemPuller
 						else if (inPrompt) 			{inPrompt = false;			pData.setPrompt(xmlr.getText());}
 						else if (inNumberOfTries) 	{inNumberOfTries = false;	pData.setNumberOfTries(Integer.parseInt(xmlr.getText()));}
 						else if (inTestString)		{inTestString = false;		pData.setTestString(xmlr.getText());}
-						else if (inFetchOnlyIfRight){inFetchOnlyIfRight = false;pData.setFetchOnlyIfRight(Boolean.parseBoolean(xmlr.getText()));}
-						else if (inReFetchIfUpdate)	{inReFetchIfUpdate = false;	pData.setReFetchIfUpdate(Boolean.parseBoolean(xmlr.getText()));}
 					break;
 					case XMLStreamConstants.END_ELEMENT:
 						if	   (xmlr.getLocalName().equals("fetchPrompt")) {inFetchPrompt = false;}

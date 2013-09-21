@@ -158,8 +158,6 @@ public class CheckAnswers extends HttpServlet {
 						if		(xmlr.getLocalName().equals("enablePrompt"))	{inEnablePrompt = false;xtw.writeEndElement();}
 						else if	(xmlr.getLocalName().equals("newPrompts"))		{inNewPrompts = false;xtw.writeEndElement();}
 						else if (xmlr.getLocalName().equals("testResponse"))	{inTestResponse = false;}
-/*						else if (xmlr.getLocalName().equals("comment")) 		{inComment = false;xtw.writeEndElement();}
-						else if (xmlr.getLocalName().equals("id")) 				{pushList = false;xtw.writeEndElement();}*/
 					break;
 				}
 				event = xmlr.next();
@@ -200,45 +198,6 @@ public class CheckAnswers extends HttpServlet {
 		return outgoingXML;
     }
     
-    private String getDependencies(String id,KernelTalker kTalker)
-    {
-    	int i;
-    	
-    	ProblemDataPusher pPusher = new ProblemDataPusher();
-    	ProblemData pData = pPusher.get(id);
-    	
-    	String args;
-    	
-		String evalString=pData.evalString;
-		
-		if((evalString!=null)&&(evalString.length()>0))
-		{
-			kTalker.executeCommand(evalString);
-		}
-		
-		if((pData.dependencies!=null)&&(pData.dependencies.size()>0))
-		{
-			args="{"+String.valueOf(pData.answerFields.size()+pData.dependencies.size());
-			
-			for (i=0;i<pData.dependencies.size();i++)
-			{
-				args += "," + getDependencies(pData.dependencies.get(i),kTalker);
-			}
-		}
-		else
-		{
-			args="{"+String.valueOf(pData.answerFields.size());
-		}
-		
-		for(i=0;i<pData.answerFields.size();i++)
-		{
-			args += ",\"" + pData.answerFields.get(i) + "\"";
-		}
-
-		args += "}";
-		return args;
-    }
-
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -323,7 +282,7 @@ public class CheckAnswers extends HttpServlet {
 					else
 					{
 						String test = pData.getTestString();
-						String key, args = "",fieldKey,fieldValue;
+						String key, args = "",fields;
 						String[] value;
 						
 						int argcount = 0;
@@ -354,13 +313,12 @@ public class CheckAnswers extends HttpServlet {
 								depId = stack.remove(0);
 								depData = pPusher.get(depId);
 								// TODO Check if depData.getAnswerFields() is nonempty, if it is, generate an XML string with error
-								for (Map.Entry<String, String> entry : depData.getAnswerFields().entrySet()) 
+								fields = depData.getAllAnswerFiledsForEvaluation();
+								if(fields.length()>0)
 								{
 									if(argcount>0) args +=", ";
 									argcount++;
-								    fieldKey = entry.getKey();
-								    fieldValue = entry.getValue();
-								    args += "\"" + fieldKey + "\" -> \"" + fieldValue + "\"";
+								    args += fields;
 								}
 								if(!depData.getDependencies().isEmpty()) {stack.addAll(depData.getDependencies());}
 							}

@@ -3,6 +3,7 @@ package com.twist.problemPool;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,9 +26,6 @@ public class ProblemData
 		this.answerCorrect = false;
 		this.fetchPrompt = new ArrayList<PromptToPull>();
 		this.supplyPrompts = new ArrayList<PromptToPull>();
-		this.promptFetched = false;
-		this.fetchOnlyIfRight = true;
-		this.reFetchIfUpdate = true;
 		this.dependencies = new ArrayList<String>();
 	}
 
@@ -90,6 +88,28 @@ public class ProblemData
 				{
 					if(stringcount>0) options +=", "+temp;
 					else options = temp;
+					stringcount++;
+				}
+			}
+		}
+		
+		if(!this.dependencies.isEmpty())
+		{
+			ProblemData depData;
+			ProblemDataPusher pPusher = new ProblemDataPusher();
+			
+			for(int i = 0, m = this.dependencies.size();i<m;i++)
+			{
+				depData = pPusher.get(this.dependencies.get(i));
+				if(depData != null)
+				{
+					temp = depData.getAllAnswerFiledsForEvaluation();
+					if(temp.length()>0)
+					{
+						if(stringcount>0) options +=", "+temp;
+						else options = temp;
+						stringcount++;
+					}
 				}
 			}
 		}
@@ -201,36 +221,6 @@ public class ProblemData
 		this.fetchPrompt.add(fetchPrompt);
 	}
 
-	public boolean isPromptFetched()
-	{
-		return promptFetched;
-	}
-
-	public void setPromptFetched(boolean promptFetched)
-	{
-		this.promptFetched = promptFetched;
-	}
-
-	public boolean isFetchOnlyIfRight()
-	{
-		return fetchOnlyIfRight;
-	}
-
-	public void setFetchOnlyIfRight(boolean fetchOnlyIfRight)
-	{
-		this.fetchOnlyIfRight = fetchOnlyIfRight;
-	}
-
-	public boolean isReFetchIfUpdate()
-	{
-		return reFetchIfUpdate;
-	}
-
-	public void setReFetchIfUpdate(boolean reFetchIfUpdate)
-	{
-		this.reFetchIfUpdate = reFetchIfUpdate;
-	}
-
 	public ArrayList<String> getDependencies()
 	{
 		return dependencies;
@@ -259,6 +249,21 @@ public class ProblemData
 	public String getSpecificAnswerField(int i)
 	{
 		return answerFields.get(i);
+	}
+	
+	public String getAllAnswerFiledsForEvaluation()
+	{
+		String fieldKey,fieldValue, args = "";
+		int argcount = 0;
+		
+		for (Map.Entry<String, String> entry : this.answerFields.entrySet()) 
+		{
+			if(argcount > 0) args +=", ";
+		    fieldKey = entry.getKey();
+		    fieldValue = entry.getValue();
+		    args += "\"" + fieldKey + "\" -> \"" + fieldValue + "\"";
+		}
+		return args;
 	}
 
 	public void setAnswerFields(HashMap<String, String> answerFields)
@@ -319,8 +324,5 @@ public class ProblemData
 
 	ArrayList<PromptToPull> fetchPrompt;			//List of prompts to fetch and send to the user after user submitted an answer
 	ArrayList<PromptToPull> supplyPrompts;		//List of prompts to supply together with this prompt
-	boolean promptFetched;					//If one submission already occurred, check the reFetchIfUpdate before generation a new prompt
-	boolean fetchOnlyIfRight;				//fetch the prompts only if test set answerCorrect to true
-	boolean reFetchIfUpdate;				//regenerate the prompts and send them again to the user. Probably will discard any user input that was previously submitted
 	ArrayList<String> dependencies;			//collect answerFields input from the prompts listed before evaluating the tests
 }

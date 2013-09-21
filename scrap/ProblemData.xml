@@ -4,14 +4,12 @@
 	</prompt>
 	<optionsString>{uu -&gt; Exp, ff -&gt; 6*E^(E^((3*x)/2) + (3*x)/2), FF -&gt; Exp}</optionsString>
 	<testString>Block[{uSub},uSub = StringReplace[&quot;uSub&quot;,{##}];Catch[If[Not[SyntaxQ[uSub]],Throw[&quot;Syntax Error&quot;],Throw[&quot;&amp;#10003;&quot;]];]]&amp;@@</testString>
-	<reFetchIfUpdate />
-	<fetchOnlyIfRight />
 	<supplyPrompts>
-		<id>21.1</id>
-		<id>21.2</id>
+		<id enabled='true'>1206.21.1</id>
+		<id enabled='false'>1206.21.2</id>
 	</supplyPrompts>
 	<fetchPrompt>
-		<id>21.3</id>
+		<id refresh='true' onlyifright = 'true'>21.3</id>
 		<id>21.4</id>
 	</fetchPrompt>
 	<dependencies>

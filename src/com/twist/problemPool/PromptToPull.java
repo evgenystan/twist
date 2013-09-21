@@ -8,6 +8,9 @@ public class PromptToPull
 		this.prompt = prompt;
 		this.enabled = enabled;
 		this.regenerate = regenerate;
+		this.promptFetched = false;
+		this.fetchOnlyIfRight = true;
+		this.reFetchIfUpdate = false;
 	}
 	public PromptToPull(String prompt, boolean enabled)
 	{
@@ -15,6 +18,9 @@ public class PromptToPull
 		this.prompt = prompt;
 		this.enabled = enabled;
 		this.regenerate = false;
+		this.promptFetched = false;
+		this.fetchOnlyIfRight = true;
+		this.reFetchIfUpdate = false;
 	}
 	public PromptToPull(String prompt)
 	{
@@ -22,6 +28,9 @@ public class PromptToPull
 		this.prompt = prompt;
 		this.enabled = true;
 		this.regenerate = false;
+		this.promptFetched = false;
+		this.fetchOnlyIfRight = true;
+		this.reFetchIfUpdate = false;
 	}
 	public PromptToPull()
 	{
@@ -29,8 +38,14 @@ public class PromptToPull
 		this.prompt = "";
 		this.enabled = true;
 		this.regenerate = false;
+		this.promptFetched = false;
+		this.fetchOnlyIfRight = true;
+		this.reFetchIfUpdate = false;
 	}
 	public String prompt;
 	public boolean enabled;
 	public boolean regenerate;
+	public boolean promptFetched;					//If one submission already occurred, check the reFetchIfUpdate before generation a new prompt
+	public boolean fetchOnlyIfRight;				//fetch the prompts only if test set answerCorrect to true
+	public boolean reFetchIfUpdate;				//regenerate the prompts and send them again to the user. Probably will discard any user input that was previously submitted
 }
