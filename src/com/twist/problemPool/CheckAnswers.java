@@ -47,17 +47,20 @@ public class CheckAnswers extends HttpServlet {
 		
 		boolean pushList			=false;
 		
-		String promptIdAttr;
-		String correctAttr;
-		String acceptedAttr;
-		String fieldIdAttr;
-		String beforeAttr;
-		String afterAttr;
+		String 	promptIdAttr,
+				correctAttr,
+				acceptedAttr,
+				fieldIdAttr,
+				beforeAttr,
+				afterAttr,
+				refreshAttr,
+				onlyifrightAttr;
 		
 		if (pData == null) {return "<?xml version='1.0'?><checkResponse><error>Internal Error: null pointer is supplied to parseXMLTestResponse</error></checkResponse>";}
 		try
 		{
 			ProblemData fetchData;
+			PromptToPull ptp;
 			XMLOutputFactory xof =  XMLOutputFactory.newInstance();
 			XMLInputFactory xif = XMLInputFactory.newInstance();
 			xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, Boolean.TRUE);
@@ -72,6 +75,7 @@ public class CheckAnswers extends HttpServlet {
 			xtw.writeStartDocument("utf-8","1.0");
 //			xtw.writeDTD("<!DOCTYPE TestResponse>");
 
+			ArrayList<PromptToPull> tempList = pData.getFetchPrompt();
 			int event = xmlr.getEventType();
 			
 			while (xmlr.hasNext())
@@ -88,10 +92,10 @@ public class CheckAnswers extends HttpServlet {
 							if(promptIdAttr!=null) xtw.writeAttribute("promptId", promptIdAttr); else xtw.writeAttribute("promptId", id);
 							
 							correctAttr = xmlr.getAttributeValue(null,"correct");
-							if(correctAttr!=null) xtw.writeAttribute("correct", correctAttr);
+							if(correctAttr!=null) {xtw.writeAttribute("correct", correctAttr);pData.setAnswerCorrect(Boolean.parseBoolean(correctAttr));}
 							
 							acceptedAttr = xmlr.getAttributeValue(null,"accepted");
-							if(acceptedAttr!=null) xtw.writeAttribute("accepted", acceptedAttr);
+							if(acceptedAttr!=null) {xtw.writeAttribute("accepted", acceptedAttr);pData.setAnswerCorrect(Boolean.parseBoolean(acceptedAttr));}
 						}
 						else if(xmlr.getLocalName().equals("comment")) 
 						{
@@ -115,23 +119,49 @@ public class CheckAnswers extends HttpServlet {
 								xtw.writeEndElement();
 							}
 						}
-						else if(xmlr.getLocalName().equals("newPrompts")) {inNewPrompts = true; xtw.writeStartElement("newPrompts");}
+						else if(xmlr.getLocalName().equals("newPrompts")||xmlr.getLocalName().equals("fetchPrompt")) {inNewPrompts = true; xtw.writeStartElement("newPrompts");}
 						else if(xmlr.getLocalName().equals("id")) 
 						{
 							pushList = true;
-							xtw.writeStartElement("id");
-							promptIdAttr = xmlr.getAttributeValue(null,"promptId");
-							if(promptIdAttr!=null) xtw.writeAttribute("promptId", promptIdAttr);
-
-							afterAttr = xmlr.getAttributeValue(null,"after");
-							if(afterAttr!=null) xtw.writeAttribute("after", afterAttr);
-							else
-							{
+							if(inNewPrompts)
+							{// in newPrompts, get the id and generate the prompt
+								ptp = new PromptToPull();
+								refreshAttr = xmlr.getAttributeValue(null,"refresh");
+								if(refreshAttr!=null) 
+								{
+									ptp.reFetchIfUpdate = Boolean.parseBoolean(refreshAttr);
+									ptp.regenerate = Boolean.parseBoolean(refreshAttr);
+								}
+								
+								onlyifrightAttr = xmlr.getAttributeValue(null,"onlyifright");
+								if(onlyifrightAttr!=null) ptp.fetchOnlyIfRight = Boolean.parseBoolean(onlyifrightAttr);
+								
+								afterAttr = xmlr.getAttributeValue(null,"after");
 								beforeAttr = xmlr.getAttributeValue(null,"before");
-								if(beforeAttr!=null) xtw.writeAttribute("before", beforeAttr);
+								if(afterAttr!=null) ptp.after = afterAttr;
+								else
+								{
+									if(beforeAttr!=null) ptp.before = beforeAttr;
+								}
+								ptp.prompt = xmlr.getElementText();
+								tempList.add(ptp);
 							}
-							xtw.writeCharacters(xmlr.getElementText());
-							xtw.writeEndElement();
+							else //Not in newPrompts just copy the id attribute
+							{
+								xtw.writeStartElement("id");
+								promptIdAttr = xmlr.getAttributeValue(null,"promptId");
+								if(promptIdAttr!=null) xtw.writeAttribute("promptId", promptIdAttr);
+	
+								afterAttr = xmlr.getAttributeValue(null,"after");
+								if(afterAttr!=null) xtw.writeAttribute("after", afterAttr);
+								else
+								{
+									beforeAttr = xmlr.getAttributeValue(null,"before");
+									if(beforeAttr!=null) xtw.writeAttribute("before", beforeAttr);
+								}
+								xtw.writeCharacters(xmlr.getElementText());
+								xtw.writeEndElement();
+							}
 						}
 					break;
 /*					case XMLStreamConstants.ATTRIBUTE :
@@ -164,18 +194,33 @@ public class CheckAnswers extends HttpServlet {
 			}
 			xmlr.close();
 		
-			ArrayList<PromptToPull> tempList = pData.getFetchPrompt();
 			int m = tempList.size();
 			if(m>0)
 			{
+				boolean fetchIt;
 				xtw.writeStartElement("newPrompts");
 				for(int i=0; i<m;i++)
 				{
-					fetchData = ProblemPuller.generateProblem(tempList.get(i), pPusher, kTalker);
-					xtw.writeStartElement("id");
-					xtw.writeAttribute("promptId", tempList.get(i).prompt);
-					xtw.writeCharacters(fetchData.getPrompt());
-					xtw.writeEndElement();
+					fetchIt = false;
+					ptp = tempList.get(i);
+					if(ptp.fetchOnlyIfRight)
+					{
+						if(pData.isAnswerCorrect())
+						{
+							fetchIt = true;
+						}
+					}
+					else fetchIt = true;
+					if(fetchIt)
+					{
+						fetchData = ProblemPuller.generateProblem(ptp, pPusher, kTalker);
+						xtw.writeStartElement("prompt");
+						xtw.writeAttribute("promptId", ptp.prompt);
+						if(ptp.after != null) xtw.writeAttribute("after", ptp.after);
+						else if (ptp.before!=null) xtw.writeAttribute("before", ptp.before);
+						xtw.writeCharacters(fetchData.getPrompt());
+						xtw.writeEndElement();
+					}
 				}
 				xtw.writeEndElement();
 			}

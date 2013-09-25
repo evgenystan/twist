@@ -12,8 +12,8 @@
 		<id>1206.21.2</id>
 	</enablePrompt>
 	<newPrompts>
-		<id  promptId='' before='' after=''>
+		<prompt  promptId='' before='' after=''>
 			<div></div>
-		</id>
+		</prompt>
 	</newPrompts>
 </checkResponse>

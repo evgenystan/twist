@@ -10,4 +10,8 @@
 		<id>1206.21.1</id>
 		<id>1206.21.2</id>
 	</enablePrompt>
+	<fetchPrompt>
+		<id refresh='true' onlyifright = 'true'>21.3</id>
+		<id>21.4</id>
+	</fetchPrompt>
 </testResponse>

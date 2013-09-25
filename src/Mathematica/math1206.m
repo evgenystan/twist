@@ -19,87 +19,10 @@
 
 
 
-(*XML generating utilities
-accepts specially formatted data structure:
-data = String | {item,{data,data,...}}
-item = String | {nodeName,{attrName,attrValue},{attrName,attrValue},...}
+Off[General::"spell1"];
+Off[General::"spell"];  
+Needs["testutils`"];
 
- Usage
-makeXMLDocument[
-{{"root",{"id","none"},{"class","none"}},
-{"item",
-"text",
-{"item",
-"text"
-},
-{{"item",{"special","yes"}},
-"Special text"
-},
-{"item",
-"text"
-}
-},
-{"item",{"item"}}
-}]
-*)
-makeXMLDocument[data_List]:=StringJoin["<?xml version='1.0' encoding='UTF-8'?>",makeXMLNode[data]];
-makeXMLNode[node_List]:= 
-If[Length[node]==1,
-StringJoin["<",openXMLNode[node[[1]]],"/>\n"],
-StringJoin["\n<",openXMLNode[node[[1]]],">",StringJoin@@Map[makeXMLNode[#]&,Drop[node,1]],"</",closeXMLNode[node[[1]]],">"]
-]
-
-makeXMLNode[text_String]:=StringReplace[ExportString[XMLElement["t",{},{text}],"XML","Entities"->"HTML"],{StartOfString~~"<t>"->"","</t>"~~EndOfString->""}]
-
-openXMLNode[name_String]:=name
-closeXMLNode[name_String]:=name
-
-openXMLNode[list_List]:=StringJoin[
-ToString[list[[1]]],
-makeXMLAttributes[Drop[list,1]]
-]
-closeXMLNode[list_List]:=ToString[list[[1]]]
-
-makeXMLAttribute[attr_List]:=StringJoin[" ",ToString[attr[[1]]],"='",ToString[attr[[2]]],"'"]
-makeXMLAttributes[attrs_List]:=Apply[StringJoin,Map[makeXMLAttribute,attrs,{1}]]
-(*end of XML utilities*)
-
-(*HTML utilities*)
-(*Wraps LaTeX for MathJax rendering*)
-htmlLatex=StringJoin["<script type='math/tex'>",#,"</script>"]&;
-
-(*Wraps LaTeX for MathJax rendering in display mode*)
-htmlLatexDisplay=StringJoin["<script type='math/tex; mode=display'>",#,"</script>"]&;
-
-(*Wrap the text in appropriate HTML tags to be displayed as a problem prompt*)
-Options[htmlPrompt]={promptId->""};
-SetOptions[htmlPrompt,promptId->""];
-
-htmlPrompt [title_String,body_String,OptionsPattern[]]:=StringJoin["<div><h2>"<>title<>"</h2></div><div promptId='"<>OptionValue[promptId]<>"'><p>"<>body<>"</p></div>"];
-htmlPrompt [body_String,OptionsPattern[]]:=StringJoin["<div promptId='"<>OptionValue[promptId]<>"'><p>"<>body<>"</p></div>"];
-
-(*Generate an input field*)
-htmlInputField [fieldId_,OptionsPattern[]]:="<span class='inputfield' style='font-size: 100%; font-family: STIXGeneral-Regular; ' contenteditable='true' fieldId = '"<>fieldId<>"'></span>"
-(*Set default options for htmlInputField*)
-Options[htmlInputField] = {Enabled->True};
-SetOptions[htmlInputField,Enabled->True];
-
-
-(*Put all input fields together and supply them with a 'Submit' button*)
-htmlInputFieldBuilder [ problemId_,prompt_, fields_,OptionsPattern[]]:=
-StringJoin["<div promptId = '",problemId,"' class='inputbox'>",prompt,"&nbsp;",fields<>"&nbsp;<input promptId = '",problemId,"' class='evalButton' type='button' value='Submit'",If[OptionValue[Enabled],""," disabled='true'"]," />&nbsp;<span id='resultsField",problemId,"'></span></div>"]
-(*Set default options for htmlInputFieldBuilder*)
-Options[htmlInputFieldBuilder] = {Enabled->True};
-SetOptions[htmlInputFieldBuilder,Enabled->True];
-(*end of HTML utilities*)
-
-
-(*Transform a Mathematica expression into a LaTeX string. A few helpful substitutions are performed for a better output*)
-tFq=Block[{dummy},StringReplace[ToString[#/.dummy'[_]->1,TeXForm],{"=="->"\[LongEqual]","\[Equal]"->"\[LongEqual]","capitalC"->"C","zzone"->"1","dummy"->"","zdummy"->"","log"->"ln"}]]&;
-
-(*Set default options for makeproblem*)
-Options[makeproblem] = {Enabled->True};
-SetOptions[makeproblem,Enabled->True];
 
 
 probleminfo[{"1206.21"}]={"A u-substitution problem"};
@@ -109,19 +32,20 @@ Module[
 {xmlResponse,
 prompt = Null,numberOfTries = 0,optionsString =  Null, evalString = Null, testString=Null,
 fetchPrompt=Null,supplyPrompts=Null,fetchOnlyIfRight = True,reFetchIfUpdate = True,dependencies=Null,
- a,b,u,uprime,f,F},
+ a,b,u,uprime,f,F,intString},
 Block[{x,uu,ff,FF,aa,bb},
 F=RandomChoice[{Exp,Tan,ArcTan,ArcSin,Log}];
 u=RandomChoice[{Cos,Sin,Exp,(#^2)&,(#^3)&,Sqrt[#]&}];
 {a,b} = RandomChoice[{1,2,3,4,5,1/2,3/2,1/3,5/3,4/3},2];
 f=D[a F[u[b x]],x];
-prompt = htmlPrompt["Integration by subsitution","Consider the integral "<>htmlLatexDisplay[tFq[Defer[Integrate[#,x]]]&[f]]];
+intString = "Consider the integral "<>tFq[Defer[Integrate[#,x]],DisplayMath->True]&[f];
+prompt = htmlPrompt["Integration by subsitution",intString];
 optionsString =ToString[ {uu->u,ff->f,FF->F,aa->a,bb->b},InputForm];
 supplyPrompts = {{"1206.21.1",Enabled->True},{"1206.21.2",Enabled->False}};
 
 (*Make an XML with special characters encoded as ENTITY_REFERENCE.*)
 xmlResponse = XMLObject["Document"][{XMLObject["Declaration"]["Version"->"1.0","Encoding"->"UTF-8"]},
-XMLElement["problemData",{},{
+XMLElement["problemData",{"type"->STATEMENT,"numberOfSteps"->"3"},{
 XMLElement["prompt",{},{prompt}],
 XMLElement["optionsString",{},{optionsString}],
 XMLElement["supplyPrompts",{},Map[XMLElement["id",{"enabled"->ToString[ReplaceAll[Enabled,#[[2]]]]},{#[[1]]}]&,supplyPrompts,{1}]]
@@ -166,7 +90,7 @@ testString = ToString[test,InputForm]<>"@@";
 
 (*Make an XML with special characters encoded as ENTITY_REFERENCE.*)
 xmlResponse = XMLObject["Document"][{XMLObject["Declaration"]["Version"->"1.0","Encoding"->"UTF-8"]},
-XMLElement["problemData",{},{
+XMLElement["problemData",{"type"->FREERESPONSE},{
 XMLElement["prompt",{},{prompt}],
 XMLElement["testString",{},{testString}]
 }]
@@ -180,9 +104,9 @@ makeproblem[{"1206.21.2"},str_,opts___]:=
 Module[
 {xmlResponse,
 prompt = Null,numberOfTries = 0,optionsString =  Null, evalString = Null, testString=Null,
-fetchPrompt=Null,supplyPrompts=Null,fetchOnlyIfRight = True,reFetchIfUpdate = True,dependencies=Null,
+fetchPrompt=Null,supplyPrompts=Null,dependencies=Null,
  a,b,u,uprime,f,F,test},
-Block[{uu,ff,FF,Enabled,promptId},
+Block[{uu,ff,FF,Enabled,promptId,refresh,onlyifright},
 f=ReplaceAll[ff,{opts}];
 prompt =StringJoin[
 htmlPrompt["Apply your proposed substitution to the integral above.",promptId->"1206.21.2"],
@@ -194,6 +118,7 @@ htmlInputFieldBuilder["1206.21.2","",
 <span class='mi' style='font-family: STIXGeneral-Italic; '>d</span>
 <span class='mrow'>"<>htmlInputField["variable"]<>"</span></span>",Sequence[FilterRules[{opts},{Enabled}]]]
 ];
+fetchPrompt = {{"1206.21.3",{refresh->False,onlyifright->True}}};
 test =ReplaceAll[ Module[{uSub,var,int,ok=True,comment="",commentvar="",commentint=""},
 Catch[
 {uSub,var,int} =  StringReplace[{"uSub","variable","integrand"},{##}];
@@ -236,7 +161,7 @@ StringReplace[uSub,WordBoundary~~"e"~~WordBoundary->"E"],{WordBoundary~~"x"~~Whi
 ],TraditionalForm];
 If[PossibleZeroQ[
 Simplify[
-ff-ReplaceAll[int,uVar->uSub] D[uSub,x]
+(ff)-ReplaceAll[int,uVar->uSub] D[uSub,x]
 ]
 ],
 Throw[makeXMLDocument[{{"testResponse",{"correct","true"},{"promptId","1206.21.2"}},{"comment","Great!"}}]],
@@ -251,15 +176,170 @@ testString = ToString[test,InputForm]<>"@@";
 dependencies = {"1206.21.1"};
 (*Make an XML with special characters encoded as ENTITY_REFERENCE.*)
 xmlResponse = XMLObject["Document"][{XMLObject["Declaration"]["Version"->"1.0","Encoding"->"UTF-8"]},
-XMLElement["problemData",{},{
+XMLElement["problemData",{"type"->FREERESPONSE},{
 XMLElement["prompt",{},{prompt}],
 XMLElement["testString",{},{testString}],
+XMLElement["fetchPrompt",{},Map[XMLElement["id",{"refresh"->ToString[ReplaceAll[refresh,#[[2]]]],"onlyifright"->ToString[ReplaceAll[onlyifright,#[[2]]]]},{#[[1]]}]&,fetchPrompt,{1}]],
 XMLElement["dependencies",{},Map[XMLElement["id",{},{#}]&,dependencies]]
 }]
 ,{}];
 Return[ExportString[xmlResponse,"XML","Annotations" ->{"DocumentHeader","XMLDeclaration"}]];
 ];
 ];
+
+
+makeproblem[{"1206.21.3"},str_,opts___]:=
+Module[
+{xmlResponse,
+prompt = Null,numberOfTries = 0,optionsString =  Null, evalString = Null, testString=Null,
+fetchPrompt=Null,supplyPrompts=Null,dependencies=Null,
+ a,b,u,uprime,f,F,test},
+Block[{x,uu,ff,FF,Enabled,promptId,refresh,onlyifright},
+{F,u}=ReplaceAll[{FF,uu},{opts}];
+prompt =StringJoin[
+htmlPrompt["Compute the antiderivative in terms of "<>tFq[x],promptId->"1206.21.3"],
+htmlInputFieldBuilder["1206.21.3",tFq[Defer[Integrate[#,x]]]&[f]<>"=",
+htmlInputField["antiderivative"],Sequence[FilterRules[{opts},{Enabled}]]]
+];
+test =ReplaceAll[ Module[{uSub,var,int,ok=True,comment="",commentvar="",commentint=""},
+Catch[
+{uSub,var,int} =  StringReplace[{"uSub","variable","integrand"},{##}];
+var = StringReplace[var,Whitespace->""];
+If[Not[LetterQ[var]],
+ok=False;
+comment = "The differential of the integral must be a single variable. ";
+commentvar = "This does not seem to be a valid variable name.";,
+If[Not[SyntaxQ[var]],
+ok=False;
+comment = comment <> "Your input cannot be interpreted as an integral. ";
+commentvar = "This does not seem to be a valid variable name.";
+];
+];
+If[Not[SyntaxQ[int]],
+ok=False;
+comment = comment <> "Your input cannot be interpreted as an integral";
+commentint = "Your integrand has a syntax error at or after **"<>StringTake[int,Min[SyntaxLength[int],StringLength[int]]]<>"**";
+];
+If[ok,
+Block[{uVar},
+int = ToExpression[
+StringReplace[
+StringReplace[
+StringReplace[
+int,
+{WordBoundary~~"e"~~WordBoundary->"E",
+start:Except[LetterCharacter]~~"e"~~end:Except[LetterCharacter]:>start<>"E"<>end,
+WordBoundary~~"e"~~end:Except[LetterCharacter]:>"E"<>end,
+start:Except[LetterCharacter]~~"e"~~WordBoundary:>start<>"E"
+}],
+{WordBoundary~~var~~Whitespace~~"("->var<>"*(",WordBoundary~~var~~"("->var<>"*(",WordBoundary~~"E"~~Whitespace~~"("->"E*(",WordBoundary~~"E("->"E*("}
+],
+var -> "uVar"
+]
+,TraditionalForm];
+If[PossibleZeroQ[
+Simplify[
+(ff)-ReplaceAll[int,uVar->uSub] D[uSub,x]
+]
+],
+Throw[makeXMLDocument[{{"testResponse",{"correct","true"},{"promptId","1206.21.2"}},{"comment","Great!"}}]],
+Throw[makeXMLDocument[{{"testResponse",{"correct","false"},{"promptId","1206.21.2"}},{"comment","Your integral does not match the original one."},{{"comment",{"fieldId","integrand"}},"This does not evaluate to match the original integral."}}]]
+]
+],
+Throw[makeXMLDocument[{{"testResponse",{"correct","false"},{"promptId","1206.21.2"}},{"comment",comment},{{"comment",{"fieldId","variable"}},commentvar},{{"comment",{"fieldId","integrand"}},commentint}}]]
+];
+]
+]&,{opts}];
+testString = ToString[test,InputForm]<>"@@";
+(*Make an XML with special characters encoded as ENTITY_REFERENCE.*)
+xmlResponse = XMLObject["Document"][{XMLObject["Declaration"]["Version"->"1.0","Encoding"->"UTF-8"]},
+XMLElement["problemData",{"type"->FREERESPONSE},{
+XMLElement["prompt",{},{prompt}],
+XMLElement["testString",{},{testString}]
+}]
+,{}];
+Return[ExportString[xmlResponse,"XML","Annotations" ->{"DocumentHeader","XMLDeclaration"}]];
+];
+]
+
+
+probleminfo[{1206,"11"}]={4,"Evaluate Riemann sums using a data set; Version 1 min; 2 left; 3, right, 4 max.",{2004,9,9}};
+
+makeproblem[{1206,"11"},str_]:=Module[
+{vers,dta,fn,dx,rsums,a,b,c,e,i,inc,lwr,upr,scale,orig,stp,ansnr},
+(*choose data*)
+vers=RandomChoice[{1,1,1,2,3,4,4,4}];
+dta={{6,7,5,3,1,2,4},{6,7,5,2,1,3,4},{6,7,5,4,3,1,2},{6,7,5,4,3,2,1},{5,7,6,4,1,2,3},{2,4,6,3,1,5,7}}[[RandomInteger[{1,6}]]];
+If[RandomInteger[]==0,dta={8,8,8,8,8,8,8}-dta];
+If[RandomInteger[]==0,dta=Reverse[dta]];
+fn=Sort[ChooseRandom[Range[-9,9],7]][[dta]];
+fn=RandomInteger[{-5,5}]+dta/2;
+dx=RandomInteger[{1,5}]/10;
+rsums=dx*Sum[{Min[fn[[{i,i+1}]]],fn[[i]],fn[[i+1]],Max[fn[[{i,i+1}]]]},{i,6}];
+inc=rsums[[2]]<rsums[[3]];
+b=rsums[[vers]];
+Which[vers==1,c=rsums[[If[inc,2,3]]];a=2b-c;,vers==2,{a,c}=rsums[[If[inc,{1,3},{3,4}]]];,vers==3,{a,c}=rsums[[If[inc,{1,4},{1,2}]]];,vers==4,a=rsums[[If[inc,3,2]]];c=2 b-a];
+e=.001;
+i=1;
+While[scale={1,2,5,10,20,50,100}[[i]];
+lwr=Ceiling[scale (a+e)];
+upr=Floor[scale (c-e)];
+Not[lwr<scale (b-e)&&scale (b+e)<upr],i++];
+orig=lwr/scale;stp=(upr-lwr)/scale;
+ansnr=RandomInteger[{If[vers==1,2,1],If[vers==4,4,5]}];
+ProblemText[str]=Join[{{"Problem",{"Let  "<>Which[vers==1,"Smin denote the smallest",vers==2,"Sl denote the left-endpoint",vers==3,"Sr denote the right-endpoint",vers==4,"Smax denote the largest"]<>" Riemann sum "<>If[vers==1||vers==4,"that can be formed ",""]<>"\nfor the function f on the given interval using the following\ntable of values:\n\n\t"<>tF@Grid[{Prepend[ToString/@(N[dx*(RandomInteger[{-4,5}]+Range[1,7])]),"x"],Prepend[ToString/@N[fn],"f(x)"]},Dividers->Center,Spacings->{1,1.1}]<>"\n\nDetermine which of the following is true:"}}},Table[{If[ansnr==i,"Right","Wrong"],{If[i<5,ToString[N[orig+stp (ansnr-i)]]<>" \[LessEqual] ","   "]<>Which[vers==1,"Smin",vers==2,"Sl",vers==3,"Sr",vers==4,"Smax"]<>If[i>1," < "<>ToString[N[orig+stp (ansnr-i+1)]],"     "]}},{i,5}],{{"Scramble",{False}},{"Comment",{linkfor["Numerical Integration"],"The "<>Which[vers==1,"smallest",vers==2,"left-endpoint",vers==3,"right-endpoint",vers==4,"largest"]<>" Riemann sum uses the "<>Which[vers==1,"smallest avaliable",vers==2,"left-endpoint",vers==3,"right-endpoint",vers==4,"largest available"]<>" value\nin each subinterval, and is "<>ToString[N[rsums[[vers]]]]<>". For Riemann sums see University\nCalculus 5.1 and "<>addlink["Numerical Integration"]}}}];];
+
+
+makeproblem[{1206,"11a"},str_,opts___]:=Module[
+{a,b,del,f,n,side,test=True,w,x0,x1,xpts},
+While[test,
+{f}=ChooseRandom[{a #^2+b #&,Log[1+a #]&,Exp[a #/5]&,Sin[a #+b]&,Sin[a #+b]&,# Sin[a #]&,# Cos[a #]&,a #/(1+b #)&,1/(1+a #^2)&},1];
+{a,b}=ChooseRandom[Range[1,5],2];
+n=RandomInteger[]+3;
+side=If[RandomInteger[]>0,"left","right"];
+del=1/RandomInteger[{2,4}];
+x0=RandomInteger[{1,8}]/2;
+x1=x0+n del;
+xpts=Drop[x0+Range[0,n]del,If[side=="left",-1,1]];
+w={sf[del Plus@@(f/@xpts)]};
+w=uUnion[Join[w,ChooseRandom[Complement[Union[w,(sf/@N/@{
+Plus@@(f/@(xpts-del))del,
+Plus@@(f/@(xpts-del/2))del,
+Plus@@(f/@(xpts-del))del 2^RandomSign[],
+Plus@@(f/@(xpts+del/2))del,
+Plus@@(f/@(xpts+del))del,
+Plus@@(f/@(xpts+del/2))del}),SameTest->(50 Abs[#1-#2]<w[[1]]&)],w],4]]];
+test=Length[w]<5;          ];
+Block[{g,x},
+ProblemText[str]=Join[{
+{"Problem",{"Which of the following is closest to the value of the\n"<>side<>"-endpoint Riemann sum of "<>tFq[g[x]==f[x]]<>"\nover the interval ["<>tF[x0]<>","<>tF[x1]<>"] divided into "<>tF[n]<>" equal segments?"}},
+{"Comment",{linkfor["Numerical Integration"],"The "<>side<>"-endpoint Riemann sum uses the "<>side<>" endpoint value\nin each subinterval. For Riemann sums see  University\nCalculus 5.1 and "<>addlink["Numerical Integration"]}}
+}, answers[w][[RandomSample[Range[Length[w]]]]]  ];   ];         ];
+
+
+probleminfo[{1206,"13"}]={3,"Antiderivatives as simple diff eq. Style 1,leak; 2 fill, find stopping time. Version-> 1, linear ; 2->exp; 3 -> a/(t+b) ",{2004,2,4}};
+
+makeproblem[{1206,"13"},str_,opts___]:=Module[
+{vers=RandomInteger[{1,3}],answr,ans,par,a,b,v0,r,fact,sty=1+RandomInteger[]},
+Block[{t},(*choose data*)ans=RandomInteger[{1,4}];
+Which[vers==1,(*drainout with linear leak*)par=RandomInteger[];
+b=RandomInteger[{If[par==0,1,2],5}];
+r=RandomInteger[{b+1,6}];
+{b,r}=2{b,r}-par;
+fact=ChooseRandom[FactorInteger[(r^2-b^2)/2],1][[1]];
+a=fact[[1]]^RandomInteger[{1,fact[[2]]}];
+v0=(r^2-b^2)/(2 a);
+If[ans>1,ans=4-2 par];
+answr=Join[{{ans==1,tForm[(-b+Sqrt[b^2+2 a v0])/a]}},ChooseRandom[{{ans==2,tForm[Simplify[(-b+Sqrt[b^2+4 a v0])/(2 a)]]},{ans==3,tForm[Simplify[Abs[b-Sqrt[Abs[b^2-4 a v0]]]/(2 a)]]},{ans==4,tForm[Simplify[(-b+Sqrt[b^2+8 a v0])/(2 a)]]}},3]];,vers==2,(*drainout with exp leak*)ans=RandomInteger[{1,5}];
+{b,v0}=ChooseRandom[Range[2,6],2];
+a=b v0+If[ans<5,1,-1]RandomInteger[{1,3}];
+answr=Join[ChooseRandom[{{ans<5,tForm[Log[Abs[a/(a-b v0)]]/b]},{False,tForm[Log[Abs[a/(a-b v0)]] b]},{False,tForm[Log[Abs[(a+b v0)/a]]/b]},{False,tForm[Log[Abs[(a+b v0)/a]]b]}},4],{{ans==5,"never"}}];,vers==3,{a,b,v0}=ChooseRandom[Range[2,7],3];
+answr=ChooseRandom[{{True,tForm[b Exp[v0/a]-b]},{False,tForm[Exp[v0/a]-b]},{False,tForm[Exp[v0/a]-b/a]},{False,tForm[(b/a) Exp[v0/a]-b/a]}},4]];
+ProblemText[str]=Join[{{"Problem",{"Liquid drains "<>If[sty==1,"from","into"]<>" a tank at the rate "<>tForm[Which[vers==1,Which[ans==1,a t+b,par==1,2a t+b,par==0,a t+b/2],vers==2,a Exp[-b t],vers==3,a/(t+b)]]<>" units\nper minute"<>If[sty==1," until empty. If the tank contains ",". If the tank starts empty and can hold "]<>tForm[v0]<>"\nunits"<>If[sty==1," at time 0, at what time will it finish draining?",", at what time will it overflow?"]}}},{If[#[[1]],"Right","Wrong"],{#[[2]]}}&/@answr,{{"Scramble",{False}},{"Comment",{"The total amount "<>If[sty==1,"drained out","in the tank"]<>" at time t is the antiderivative\nof the "<>If[sty==1,"rate of loss","fill rate"]<>", with constant of integration adjusted to\nmake it "<>If[sty==1,tF[v0],"0"]<>" at time 0. This is "<>tForm[Which[vers==1,Which[ans==1,(a/2) t^2+b t,par==1,a t^2+b t,par==0,(a/2) t^2+b t/2],vers==2,(a/b)(1-Exp[-b t]),vers==3,a Log[t/b+1]]]<>". Then solve for time\nwhen amount "<>If[sty==1,"drained equals the original amount.","equals capacity."]}}}]; ]; ];
+
+
+On[General::"spell1"];
+On[General::"spell"];
 
 
 

@@ -242,6 +242,7 @@ function showResults(data, textStatus, jqXHR, dataType)
 		var id = data.getElementsByTagName("checkResponse")[0].getAttribute('promptId');
 		var resultSpan = document.getElementById('resultsField'+id);
 		var div = findParentDiv(resultSpan);
+		var commentText;
 		
 		for(var i =0,m=commentlist.length;i<m;i++)
 		{
@@ -249,11 +250,15 @@ function showResults(data, textStatus, jqXHR, dataType)
 			fieldId = comment.getAttribute('fieldId');
 			if(fieldId)
 			{
-				$(div).find('[fieldid="'+fieldId+'"]').qtip(
-															{
-																content: comment.textContent, // Use the tooltip attribute of the element for the content
-																style: 'dark' // Give it a crea mstyle to make it stand out
-															});
+				commentText = comment.textContent;
+				if (commentText.replace(/\s*/,"").length>0)
+				{
+					$(div).find('[fieldid="'+fieldId+'"]').qtip(
+																{
+																	content: commentText, // Use the tooltip attribute of the element for the content
+																	style: 'dark' // Give it a cream style to make it stand out
+																});
+				}
 			}
 			else
 			{
@@ -261,12 +266,38 @@ function showResults(data, textStatus, jqXHR, dataType)
 			}
 		}
 		
-		var enableList = data.getElementsByTagName("enablePrompt")[0],child;
+		var enableList = data.getElementsByTagName("enablePrompt"),node,child;
 		
-		for(var i = 0, m= enableList.childNodes.length;i<m;i++)
+		for(var i = 0, m= enableList.length;i<m;i++)
 		{
-			child = enableList.childNodes[i];
-			$('input[promptId="'+child.textContent+'"]').removeAttr('disabled');
+			node = enableList[i];
+			for(j=0,n=node.childNodes.length;j<n;j++)
+			{	
+				child = node.childNodes[j];
+				$('input[promptId="'+child.textContent+'"]').removeAttr('disabled');
+			}
+		}
+		var promptList = data.getElementsByTagName("newPrompts"),htmlContainer,contentDiv=document.getElementById('content');
+		
+		for(var i = 0, m= promptList.length;i<m;i++)
+		{
+			node = promptList[i];
+			for(j=0,n=node.childNodes.length;j<n;j++)
+			{	
+				child = node.childNodes[j];
+				htmlContainer = document.createElement("div");
+				htmlContainer.innerHTML = child.textContent;
+				
+				for (var k=0,l=htmlContainer.children.length;k<l;k++)
+				{
+					child = contentDiv.appendChild(htmlContainer.children[0]); //zero!!! because the "children" list is live!!!!
+					MathJax.Hub.Queue(["Typeset",MathJax.Hub,child]);
+				    $(child).find('.evalButton').click(sendToEvaluate);
+				    $(child).find('.addField').click(addInputField);
+				    $(child).find('svg').attr('width','360px');
+				    $(child).find('svg').attr('height','256px');
+				}
+			}
 		}
 	}
 	else
@@ -276,7 +307,6 @@ function showResults(data, textStatus, jqXHR, dataType)
 		
 		span.innerHTML = data.replace(/"/g,"");
 	}
-
 }
 
 $(document).ready(function() {
